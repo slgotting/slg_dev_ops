@@ -18,6 +18,11 @@ def get_arguments():
         '-c', '--codename', default="bionic",
         help="The target codename (ubuntu: trusty, xenial, artful, bionic || debian: jessie, stretch)")
 
+    bools = parser.add_argument_group()
+
+    bools.add_argument('-s', '--suppress_start, action="store_false",
+                       help="If tick added, will not start nginx on completion")
+
     args = parser.parse_args()
 
     return args
@@ -44,11 +49,13 @@ args = get_arguments()
 not_ready = test_args(args)
 if not_ready:
     print(not_ready)
-
-# root check
-if os.geteuid() == 0:
-    install_nginx(os_=args.os, codename=args.codename)
 else:
-    print("We're not root.")
-    subprocess.call(['sudo', *sys.argv])
-    sys.exit()
+
+    # root check; this created a process that locked root access for some reason. We'll just rely on the bash commands sudo instead of a python "with" command.
+    # if os.geteuid() == 0:
+    install_nginx(os_=args.os, codename=args.codename,
+                  start=args.suppress_start)
+    # else:
+    #     print("We're not root.")
+    #     subprocess.call(['sudo', *sys.argv])
+    #     sys.exit()
