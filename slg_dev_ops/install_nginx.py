@@ -3,7 +3,6 @@ import argparse
 
 
 def install_nginx(os='ubuntu', codename='bionic'):
-
     os.system('sudo touch /etc/apt/sources.list.d/nginx.list')
     with open('/etc/apt/sources.list.d/nginx.list', 'w') as f:
         print(
