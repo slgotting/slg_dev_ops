@@ -42,14 +42,13 @@ def test_args(args):
 
 args = get_arguments()
 not_ready = test_args(args)
-
 if not_ready:
     print(not_ready)
+
+# root check
+if os.geteuid() == 0:
+    install_nginx(os_=args.os, codename=args.codename)
 else:
-    # root check and install
-    if os.geteuid() == 0:
-        install_nginx(os_=args.os, codename=args.codename)
-    else:
-        print("We're not root.")
-        subprocess.call(['sudo', *sys.argv])
-        sys.exit()
+    print("We're not root.")
+    subprocess.call(['sudo', *sys.argv])
+    sys.exit()
