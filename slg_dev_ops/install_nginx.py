@@ -2,14 +2,14 @@ import os
 import argparse
 
 
-def install_nginx(os='ubuntu', codename='bionic'):
+def install_nginx(os_='ubuntu', codename='bionic'):
     os.system('sudo touch /etc/apt/sources.list.d/nginx.list')
     with open('/etc/apt/sources.list.d/nginx.list', 'w') as f:
         print(
-            f'deb http://nginx.org/packages/mainline/{os}/ {codename} nginx',
+            f'deb http://nginx.org/packages/mainline/{os_}/ {codename} nginx',
             file=f)
         print(
-            f'deb-src http://nginx.org/packages/mainline/{os}/ {codename} nginx',
+            f'deb-src http://nginx.org/packages/mainline/{os_}/ {codename} nginx',
             file=f)
     os.system('wget http://nginx.org/keys/nginx_signing.key')
     os.system('sudo apt-key add nginx_signing.key')

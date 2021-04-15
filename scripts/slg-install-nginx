@@ -48,7 +48,7 @@ if not_ready:
 else:
     # root check and install
     # if os.geteuid() == 0:
-    install_nginx(os=args.os, codename=args.codename)
+    install_nginx(os_=args.os, codename=args.codename)
     # else:
     #     print("We're not root.")
     #     subprocess.call(['sudo', *sys.argv])
