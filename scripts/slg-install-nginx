@@ -20,8 +20,9 @@ def get_arguments():
 
     bools = parser.add_argument_group()
 
-    bools.add_argument('-s', '--suppress_start, action="store_false",
-                       help="If tick added, will not start nginx on completion")
+    bools.add_argument(
+        '-s', '--suppress_start', action="store_false",
+        help="If tick added, will not start nginx on completion")
 
     args = parser.parse_args()
 
