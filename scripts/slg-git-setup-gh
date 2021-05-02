@@ -34,7 +34,14 @@ if __name__ == "__main__":
     # not used now
     # args = get_arguments()
 
+    subprocess.run(
+        'sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0',
+        shell=True)
+    subprocess.run(
+        'sudo apt-add-repository https://cli.github.com/packages', shell=True)
+
     subprocess.run('sudo apt update', shell=True)
+
     subprocess.run('sudo apt install git', shell=True)
     subprocess.run('sudo apt install gh', shell=True)
 
