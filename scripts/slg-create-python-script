@@ -13,6 +13,10 @@ def get_arguments():
     # REQUIRED string value
     parser.add_argument('script_name', help="Name of the script")
 
+    parser.add_argument(
+        '-d', '--directory', default='$HOME/bin/',
+        help='The location of where this script should go (default is $HOME/bin')
+
     # optional string value
     parser.add_argument('-u', '--username', default="steven",
                         help="Name of the user")
@@ -66,11 +70,12 @@ if __name__ == '__main__':
 if __name__ == "__main__":
     args = get_arguments()
     script_name = args.script_name
+
     subprocess.run(
-        f"sudo -u {args.username} echo \"{TEMPLATE}\" > $HOME/bin/{script_name}",
+        f"sudo -u {args.username} echo \"{TEMPLATE}\" > {args.directory}/{script_name}",
         shell=True)
 
     if args.make_executable:
         subprocess.run(
-            f"sudo -u {args.username} chmod u+x $HOME/bin/{script_name}",
+            f"sudo -u {args.username} chmod u+x {args.directory}/{script_name}",
             shell=True)
