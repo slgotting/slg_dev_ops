@@ -22,6 +22,8 @@ def get_arguments():
 def main(args):
     confirm = input('This is a confirmation checking to make sure you are at the root of your repository. Meaning there is a .git directory and a .gitmodules file in this directory. Press enter to verify and continue. Press Ctrl-C to escape. ')
 
+    confirmation_two = input('\n\nWARNING: Please check your .git/config file for your submodules and verify that there are two lines following the [submodule "your_submodule"] line. This script deletes two lines with no checks')
+
     path = args.path_to_submodule
 
     # sed needs its own defined path because if there are / 's in the path then sed interprets those incorrectly
