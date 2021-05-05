@@ -23,15 +23,18 @@ def main(args):
     confirm = input('This is a confirmation checking to make sure you are at the root of your repository. Meaning there is a .git directory and a .gitmodules file in this directory. Press enter to verify and continue. Press Ctrl-C to escape. ')
 
     path = args.path_to_submodule
+
+    # sed needs its own defined path because if there are / 's in the path then sed interprets those incorrectly
+    sed_path = '\/'.join(path.split('/'))
     dirname = path.split('/')[-1]
 
     # clear the 3 lines defined in the gitmodules file
-    subprocess.run(f"sed -i '/submodule \"{path}\"/,+2d' .gitmodules", shell=True)
+    subprocess.run(f"sed -i '/submodule \"{sed_path}\"/,+2d' .gitmodules", shell=True)
 
     subprocess.run("git add .gitmodules", shell=True)
     
     # clear the 2 lines defined in the .git/config file
-    subprocess.run(f"sed -i '/submodule \"{path}\"/,+1d' .git/config", shell=True)
+    subprocess.run(f"sed -i '/submodule \"{sed_path}\"/,+2d' .git/config", shell=True)
 
     subprocess.run(f"git rm --cached {path}", shell=True)
     subprocess.run(f"rm -rf .git/modules/{path}", shell=True)
