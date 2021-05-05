@@ -26,12 +26,12 @@ def main(args):
     dirname = path.split('/')[-1]
 
     # clear the 3 lines defined in the gitmodules file
-    subprocess.run(f"sed -i '/submodule \"{dirname}\"/,+2d' .gitmodules", shell=True)
+    subprocess.run(f"sed -i '/submodule \"{path}\"/,+2d' .gitmodules", shell=True)
 
     subprocess.run("git add .gitmodules", shell=True)
     
     # clear the 2 lines defined in the .git/config file
-    subprocess.run(f"sed -i '/submodule \"{dirname}\"/,+1d' .git/config", shell=True)
+    subprocess.run(f"sed -i '/submodule \"{path}\"/,+1d' .git/config", shell=True)
 
     subprocess.run(f"git rm --cached {path}", shell=True)
     subprocess.run(f"rm -rf .git/modules/{path}", shell=True)
