@@ -2,6 +2,8 @@
 import subprocess
 import os
 import argparse
+import sys
+import re
 
 
 def get_arguments():
@@ -75,10 +77,22 @@ if __name__ == '__main__':
     # get latest release from github repo
     releases = subprocess.check_output(
         f'gh release list -R {args.username}/{repo_name}', shell=True)
-    latest_version = releases.decode('utf-8').split('\n')[0].split('\t')[0]
 
-    # update version (this has v on the front of it)
-    new_version = increment_version(latest_version, args)
+    if len(releases.decode('utf-8')) == 0:  # means this is the first release
+        while True:
+            new_version = 'v' + input(
+                'Please enter an initial version number with format "x.x.x": ')
+            if re.match('v[0-9]\.[0-9]\.[0-9]', new_version):
+                break
+            else:
+                print(
+                    'Please enter the appropriate format([0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3})')
+        print('\n\nAlso make sure to add repository secrets for PYPI on github before releasing. \n\n')
+    else:
+        latest_version = releases.decode('utf-8').split('\n')[0].split('\t')[0]
+
+        # update version (this has v on the front of it)
+        new_version = increment_version(latest_version, args)
 
     subprocess.run(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
