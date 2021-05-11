@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # need to decrypt personal access token
     subprocess.run('git config --global credential.helper cache', shell=True)
 
-    subprocess.run('gh repo clone slgotting/secrets slg-secrets', shell=True)
+    subprocess.run('git clone git@github.com:slgotting/secrets.git', shell=True)
 
     # login to gh
     subprocess.run(
