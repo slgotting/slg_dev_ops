@@ -97,8 +97,12 @@ if __name__ == '__main__':
     output = subprocess.check_output(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
 
-    subprocess.run(
+    pushed = subprocess.check_output(
         f'git add version.py && git commit -m "{args.commit_message}" && git push origin master',
         shell=True)
 
-    subprocess.run(f'gh release create {new_version}', shell=True)
+    
+    if 'rejected' in pushed.decode('utf-8'):
+        print('\n\nPush was rejected for some reason. Check output and make appropriate fixes before pushing a release')
+    else:
+        subprocess.run(f'gh release create {new_version}', shell=True)
