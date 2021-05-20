@@ -94,7 +94,7 @@ if __name__ == '__main__':
         # update version (this has v on the front of it)
         new_version = increment_version(latest_version, args)
 
-    subprocess.run(
+    output = subprocess.check_output(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
 
     subprocess.run(
