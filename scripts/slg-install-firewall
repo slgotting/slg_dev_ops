@@ -12,7 +12,7 @@ def get_arguments():
     bools.add_argument('-o', dest='openssh', action='store_false',
                        help='Not recommended to tick, will not allow SSH access')
 
-    bools.add_argument('-h', dest='http', action='store_false',
+    bools.add_argument('-p', dest='http', action='store_false',
                        help='Tick to turn off allowing http, on by default')
     bools.add_argument('-s', dest='https', action='store_false',
                        help='Tick to turn off allowing https, on by default')
