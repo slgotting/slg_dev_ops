@@ -2,6 +2,7 @@
 import subprocess
 import os
 import argparse
+import time
 
 
 def get_arguments():
@@ -62,7 +63,9 @@ if __name__ == '__main__':
         f'''ssh root@{remote_ip} "sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config"''',
         shell=True)
 
+    time.sleep(1)
     password = input('Enter sudo password for user setup: ')
+    time.sleep(1)
     user_commands = f'''
         echo {password} | sudo -S apt update &&
         echo {password} | sudo -S apt-get install -y python3-pip &&

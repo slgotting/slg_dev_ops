@@ -9,7 +9,7 @@ def install_nginx(os_='ubuntu', codename='bionic', start=True):
         f"sudo bash -c \"echo 'deb http://nginx.org/packages/mainline/{os_}/ {codename} nginx' >> /etc/apt/sources.list.d/nginx.list\"")
     os.system(
         f"sudo bash -c \"echo 'deb-src http://nginx.org/packages/mainline/{os_}/ {codename} nginx' >> /etc/apt/sources.list.d/nginx.list\"")
-    os.system('wget http://nginx.org/keys/nginx_signing.key')
+    os.system('wget https://nginx.org/keys/nginx_signing.key')
     os.system('sudo apt-key add nginx_signing.key')
     os.system('sudo apt-get update')
     os.system('sudo apt-get install -y nginx')
