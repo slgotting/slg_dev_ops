@@ -13,16 +13,8 @@ def get_arguments():
     parser.add_argument('domain_name', help='The domain name without www attached but with TLD attached, ie example.com')
 
     # integer value
-    parser.add_argument('-m', '--max', default=136, type=int,
-                        help='')
-
-    # boolean (default=False; store_true means if ticked then args['ugly'] == True)
-    bools.add_argument('-u', dest='ugly', action='store_true',
-                       help='are you ugly')
-
-    # boolean (default=True; store_false means if ticked then args['sexy'] == False)
-    bools.add_argument('-s', dest='sexy', action='store_false',
-                       help='are you sexy')
+    parser.add_argument('-u', '--username', type=str, required=True,
+                        help='The user calling this script. Since this is run as sudo it is necessary')
 
     args = parser.parse_args()
 
@@ -43,6 +35,8 @@ def main(args):
     except ValueError:
         print('Please only include the domain name and the top-level domain (ie example.com) in your domain name')
         return
+
+    username = args.username
 
     # password = input('Enter sudo password for sudo commands: ')
     # user_commands = f'''
@@ -70,7 +64,7 @@ def main(args):
     subprocess.run(f'sudo certbot --nginx -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
 
     line="0 12 * * * /usr/bin/certbot renew --quiet"
-    subprocess.run(f'(crontab -u $(whoami) -l; echo "{line}" ) | crontab -u $(whoami) -', shell=True)
+    subprocess.run(f'(crontab -u {username} -l; echo "{line}" ) | crontab -u {username} -', shell=True)
 
 
 if __name__ == '__main__':

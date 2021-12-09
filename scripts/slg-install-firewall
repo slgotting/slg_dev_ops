@@ -35,4 +35,5 @@ if __name__ == '__main__':
     if args.https:
         subprocess.run('sudo ufw allow 443', shell=True)
 
+    print('\n\n--------Your new configuration--------\n')
     subprocess.run('sudo ufw status', shell=True)
