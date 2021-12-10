@@ -21,6 +21,8 @@ def get_arguments():
                        help='should we install docker?')
     bools.add_argument('-c', '--compose', action='store_true',
                        help='should we install docker-compose?')
+    bools.add_argument('-n', '--node', action='store_true',
+                       help='should we install node?')
 
     args = parser.parse_args()
 
@@ -92,6 +94,16 @@ if __name__ == '__main__':
         subprocess.run(
             f'ssh {args.username}@{remote_ip} "{cmd}"', shell=True)
         print('Docker compose successfully installed')
+
+    if args.node:
+        cmd = f'''
+            echo {password} | sudo -S curl -sL https://deb.nodesource.com/setup_16.x -o /home/{args.username}/nodesource_setup.sh &&
+            echo {password} | sudo -S bash nodesource_setup.sh &&
+            echo {password} | sudo -S apt-get install -y nodejs
+        '''
+        subprocess.run(
+            f'ssh {args.username}@{remote_ip} "{cmd}"', shell=True)
+        print('Node/npm successfully installed')
 
     print(
         f"\n\nNow you can login as {args.username}: ssh {args.username}@{remote_ip}!")
