@@ -176,8 +176,11 @@ if __name__ == '__main__':
                 for file in files:
                     if file in IGNORE_FILES:
                         continue
-                    crontab_line = parse_filename_as_cronjob(directory, file)
-                    crontab_lines.append(crontab_line)
+                    try:
+                        crontab_line = parse_filename_as_cronjob(directory, file)
+                        crontab_lines.append(crontab_line)
+                    except:
+                        logger.exception(f"\n\nCouldn't create crontab line with:\n\nDirectory: {directory}\n\nFile: {file}\n\n")
 
             except StopIteration:
                 break
