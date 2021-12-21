@@ -34,9 +34,10 @@ TEMPLATE = """#!/usr/bin/env python3
 import subprocess
 import os
 import argparse
+from argparse import RawTextHelpFormatter
 
 def get_arguments():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
 
     # argument groups can have their tickers combined (ie -su)
     bools = parser.add_argument_group()
