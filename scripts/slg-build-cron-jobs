@@ -122,6 +122,9 @@ SPECIAL_DIRS = [
     'modules',
     'logs'
 ]
+IGNORE_FILES = [
+    '__init__.py'
+]
 
 if __name__ == '__main__':
     try:
@@ -164,14 +167,17 @@ if __name__ == '__main__':
 
                 dir_files = [] # files that have directory prepended to the front
                 for file in files:
+                    if file in IGNORE_FILES:
+                        continue
                     dir_files.append(f'{directory}/{file}')
 
                 out_files += dir_files
 
                 for file in files:
+                    if file in IGNORE_FILES:
+                        continue
                     crontab_line = parse_filename_as_cronjob(directory, file)
                     crontab_lines.append(crontab_line)
-
 
             except StopIteration:
                 break
