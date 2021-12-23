@@ -4,9 +4,6 @@ import os
 import argparse
 from argparse import RawTextHelpFormatter
 import re
-import logging
-from logging import Formatter, StreamHandler
-from logging.handlers import RotatingFileHandler
 from logger_slg import init_logger
 
 CHAR_MAPPING = {
