@@ -174,7 +174,8 @@ if __name__ == '__main__':
                         continue
                     try:
                         crontab_line = parse_filename_as_cronjob(directory, file)
-                        crontab_lines.append(crontab_line)
+                        if crontab_line:
+                            crontab_lines.append(crontab_line)
                     except:
                         logger.exception(f"\n\nCouldn't create crontab line with:\n\nDirectory: {directory}\n\nFile: {file}\n\n")
 
