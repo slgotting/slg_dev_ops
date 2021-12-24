@@ -51,12 +51,11 @@ def get_arguments():
     # REQUIRED string value
     parser.add_argument('-d', '--directory', required=True, help='Absolute path to the directory where cronjobs are stored (pwd while in directory to get path)')
 
-    bools.add_argument('-o', '--dont_overwrite_existing', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
-
     # integer value
     parser.add_argument('-u', '--username', default='steven', type=str,
                         help='Username of the crontab to append to')
 
+    bools.add_argument('-o', '--dont_overwrite_existing', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
 
     args = parser.parse_args()
 
@@ -124,9 +123,9 @@ IGNORE_FILES = [
 ]
 
 if __name__ == '__main__':
+    args = get_arguments()
+    print(args)
     try:
-        args = get_arguments()
-        print(args)
 
         # get all files and directories in directory
         # files, dirs = os.walk(args.directory).__next__()
