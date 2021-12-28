@@ -82,13 +82,15 @@ if __name__ == '__main__':
     user_commands = f'''
         echo {password} | sudo -S apt update &&
         echo {password} | sudo -S apt-get install -y python3-pip &&
-        pip3 install slg-dev-ops &&
+        pip3 install logger-slg && pip3 install slg-dev-ops &&
         echo {password} | sudo -S chown -R {args.username} ~/.ssh/ &&
         echo {password} | sudo -S chmod 700 ~/.ssh/ &&
         echo {password} | sudo -S chmod 600 ~/.ssh/*
     '''.replace('\t', '').replace('\n', '')
     subprocess.run(
         f'ssh {args.username}@{remote_ip} "{user_commands}"', shell=True)
+    subprocess.run(
+        f'ssh {args.username}@{remote_ip} "echo {password} | sudo -S service sshd restart"', shell=True)
 
     if args.docker:
         cmd = f'''echo {password} | sudo -S apt install -y docker.io &&
