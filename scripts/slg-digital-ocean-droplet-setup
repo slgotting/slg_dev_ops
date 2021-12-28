@@ -60,6 +60,17 @@ if __name__ == '__main__':
         f"cat ~/.ssh/id_rsa_do | ssh root@{remote_ip} 'cat > /home/{args.username}/.ssh/id_rsa'",
         shell=True)
 
+    # install fail2ban as root
+    cmd = '''
+        apt install fail2ban -y &&
+        cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local &&
+        service fail2ban restart
+    '''
+    subprocess.run(
+        f'ssh root@{remote_ip} "{cmd}"',
+        shell=True)
+
+    time.sleep(1)
     # remove root login access
     subprocess.run(
         f'''ssh root@{remote_ip} "sed -i 's/PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config"''',
