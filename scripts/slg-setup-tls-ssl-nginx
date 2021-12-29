@@ -6,15 +6,13 @@ import argparse
 def get_arguments():
     parser = argparse.ArgumentParser()
 
-    # argument groups can have their tickers combined (ie -su)
-    bools = parser.add_argument_group()
-
-    # REQUIRED string value
     parser.add_argument('domain_name', help='The domain name without www attached but with TLD attached, ie example.com')
 
-    # integer value
     parser.add_argument('-u', '--username', type=str, required=True,
                         help='The user calling this script. Since this is run as sudo it is necessary')
+
+    parser.add_argument('-e', '--email_address', type=str, required=True,
+                        help='The email address to point LetsEncrypt to, so we can run the script non-interactively')
 
     args = parser.parse_args()
 
@@ -61,7 +59,7 @@ def main(args):
     if os.path.exists("/etc/nginx/sites-enabled/default"):
         os.remove("/etc/nginx/sites-enabled/default")
 
-    subprocess.run(f'sudo certbot --nginx -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
+    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos --email {args.email_address} -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
 
     line="0 12 * * * /usr/bin/certbot renew --quiet"
     subprocess.run(f'(crontab -u {username} -l; echo "{line}" ) | crontab -u {username} -', shell=True)
