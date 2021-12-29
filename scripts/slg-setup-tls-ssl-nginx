@@ -48,8 +48,8 @@ def main(args):
     #     user_commands, shell=True)
 
     subprocess.run('sudo apt update', shell=True)
-    subprocess.run('sudo apt install certbot', shell=True)
-    subprocess.run('sudo apt install python3-certbot-nginx', shell=True)
+    subprocess.run('sudo apt install -y certbot', shell=True)
+    subprocess.run('sudo apt install -y python3-certbot-nginx', shell=True)
 
     with open(f'/etc/nginx/conf.d/{domain_name}.conf', 'w+') as f:
         f.write(SERVER_CODE(domain_name, top_level_domain))

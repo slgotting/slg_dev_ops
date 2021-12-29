@@ -42,8 +42,8 @@ if __name__ == "__main__":
 
     subprocess.run('sudo apt update', shell=True)
 
-    subprocess.run('sudo apt install git', shell=True)
-    subprocess.run('sudo apt install gh', shell=True)
+    subprocess.run('sudo apt-get install -y git', shell=True)
+    subprocess.run('sudo apt-get install -y gh', shell=True)
 
     # need to decrypt personal access token
     subprocess.run('git config --global credential.helper cache', shell=True)
