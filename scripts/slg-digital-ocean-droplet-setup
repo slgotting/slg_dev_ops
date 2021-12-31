@@ -44,7 +44,7 @@ if __name__ == '__main__':
         'What is the IP of the remote host? ')
 
     setup_command = f"""
-        adduser --disabled-password --gecos "" {args.username} &&
+        adduser {args.username} &&
         usermod -aG sudo {args.username} &&
         mkdir /home/{args.username}/.ssh
     """.replace('\t', '').replace('\n', '')
