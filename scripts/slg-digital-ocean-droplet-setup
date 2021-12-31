@@ -57,6 +57,11 @@ if __name__ == '__main__':
         f"cat ~/.ssh/id_rsa.pub | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/authorized_keys'",
         shell=True)
 
+    # copy github read ssh key to remote machine
+    subprocess.run(
+        f"cat ~/.ssh/id_gh_read_only | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/id_gh_read_only'",
+        shell=True)
+
     # install fail2ban as root
     cmd = '''
         apt-get install -y fail2ban &&
