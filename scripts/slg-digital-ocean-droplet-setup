@@ -44,7 +44,7 @@ if __name__ == '__main__':
         'What is the IP of the remote host? ')
 
     setup_command = f"""
-        adduser {args.username} &&
+        adduser --disabled-password --gecos "" {args.username} &&
         usermod -aG sudo {args.username} &&
         mkdir /home/{args.username}/.ssh
     """.replace('\t', '').replace('\n', '')
@@ -52,17 +52,14 @@ if __name__ == '__main__':
     # run initial setup commands
     subprocess.run(f'ssh root@{remote_ip} "{setup_command}"', shell=True)
 
-    # copy ssh key to remote machine
+    # copy public ssh key to remote machine
     subprocess.run(
         f"cat ~/.ssh/id_rsa.pub | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/authorized_keys'",
-        shell=True)
-    subprocess.run(
-        f"cat ~/.ssh/id_rsa_do | ssh root@{remote_ip} 'cat > /home/{args.username}/.ssh/id_rsa'",
         shell=True)
 
     # install fail2ban as root
     cmd = '''
-        apt install fail2ban -y &&
+        apt-get install -y fail2ban &&
         cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local &&
         service fail2ban restart
     '''
