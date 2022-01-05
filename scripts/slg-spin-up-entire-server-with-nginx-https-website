@@ -10,7 +10,9 @@ import time
 
 
 def get_arguments():
-    parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(description='''
+        If you have initialization steps you want to take, make sure to name it "init.sh" and place it in the projects root
+    ''', formatter_class=RawTextHelpFormatter)
 
     # argument groups can have their tickers combined (ie -su)
     bools = parser.add_argument_group()
@@ -20,6 +22,8 @@ def get_arguments():
     parser.add_argument('-d', '--domain_name', help='Domain name of the site (with no www prepended, ie twitchclip.io)', required=True)
 
     parser.add_argument('-u', '--username', help='Username to be created on the remote machine', required=True)
+
+    parser.add_argument('-g', '--github_username', help='Github username for pulling of project', required=True)
 
     parser.add_argument('-r', '--remote_ip', help='IP address of the remote server', required=True)
 
@@ -109,16 +113,14 @@ if __name__ == '__main__':
     print_in_color_then_reset('\n\n---- NOW STARTING LINE 91 ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 -v /home/{uname}/{args.project_name}-mongo:/data/db -d mongo')
 
-    print('\n\n---- SCRIPT FINISHED SUCCESSFULLY ----\n\n')
-    print('''You should generate an SSH key (on the remote server) with:
+    print_in_color_then_reset('\n\n---- NOW STARTING LINE 113 ----\n\n')
+    run_remote_command(uname, ip, f'ssh-keygen -q -t rsa -N \'\' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1')
+    print("\n\nCopy the below string and paste into a deploy key in your project's repository:\n\n")
+    run_remote_command(uname, ip, f'cat ~/.ssh/id_gh_read_only.pub')
 
-    $ ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1
+    input("\n\nWhen you've pasted in the above key press enter to continue. Or hit Ctrl-C if you don't wish to proceed in cloning your repo and performing initialization.")
 
-    And then add a deploy key to the repository you are going to pull.
+    run_remote_command(uname, ip, f'git clone --recurse-submodules git@github.com:{args.github_username}/{args.project_name}.git')
 
-    Copy the output of this command into the github deploy key section:
-
-    $ cat ~/.ssh/id_gh_read_only.pub
-
-    This has no passphrase assigned and is destined to be a read-only (or "deploy") key
-    ''')
+    # run the initialization script in the repository
+    run_remote_command(uname, ip, f'echo {password} | sudo -S ~/{args.project_name}/init.sh')

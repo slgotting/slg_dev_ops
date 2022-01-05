@@ -62,16 +62,6 @@ if __name__ == '__main__':
         f"cat ~/.ssh/id_rsa | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/id_gh_write_read'",
         shell=True)
 
-    # add different git keys as aliases
-    lines = '''
-    alias gitread="git config core.sshCommand 'ssh -i ~/.ssh/id_gh_read_only -F /dev/null'"
-    alias gitwrite="git config core.sshCommand 'ssh -i ~/.ssh/id_gh_write_read -F /dev/null'"
-    '''.replace('\t','')
-
-    subprocess.run(
-        f"ssh root@{remote_ip} 'echo {lines} >> /home/{args.username}/.bashrc'",
-        shell=True)
-
 
     # install fail2ban as root
     cmd = '''
@@ -136,6 +126,16 @@ if __name__ == '__main__':
 
     if args.docker:
         print("\n\nTo start docker run systemctl start docker && systemctl enable docker")
+
+    # add different git keys as aliases
+    lines = '''
+    alias gitread="git config --global core.sshCommand 'ssh -i ~/.ssh/id_gh_read_only -F /dev/null'"
+    alias gitwrite="git config --global core.sshCommand 'ssh -i ~/.ssh/id_gh_write_read -F /dev/null'"
+    '''.replace('\t','')
+
+    subprocess.run(
+        f"ssh root@{remote_ip} 'echo {lines} >> /home/{args.username}/.bashrc'",
+        shell=True)
 
     # # copy github private ssh key from local machine to /Users/{args.username}/.ssh/ directory
     # print(
