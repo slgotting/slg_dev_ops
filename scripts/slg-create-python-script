@@ -83,14 +83,14 @@ if __name__ == "__main__":
         log_path=f'/var/log/slg/{__file__.split("/")[-1]}.log',
     )
     try:
-        result = subprocess.check_output(f"sudo -u {args.username} echo \"{TEMPLATE}\" > {args.directory}/{script_name}", shell=True)
+        result = subprocess.check_output(f"sudo -u {args.username} echo \"{TEMPLATE}\" > '{args.directory}/{script_name}'", shell=True)
 
         # this line makes sure that it ran properly; otherwise it will error out quietly
         logger.info(result)
 
         if args.make_executable:
             result = subprocess.check_output(
-                f"sudo -u {args.username} chmod u+x {args.directory}/{script_name}",
+                f"sudo -u {args.username} chmod u+x '{args.directory}/{script_name}'",
                 shell=True)
             logger.info(result)
 

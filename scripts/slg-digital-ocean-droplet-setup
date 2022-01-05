@@ -57,10 +57,21 @@ if __name__ == '__main__':
         f"cat ~/.ssh/id_rsa.pub | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/authorized_keys'",
         shell=True)
 
-    # copy github read ssh key to remote machine
+    # copy github pass protected ssh key to remote machine
     subprocess.run(
-        f"cat ~/.ssh/id_gh_read_only | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/id_gh_read_only'",
+        f"cat ~/.ssh/id_rsa | ssh root@{remote_ip} 'cat >> /home/{args.username}/.ssh/id_gh_write_read'",
         shell=True)
+
+    # add different git keys as aliases
+    lines = '''
+    alias gitread="git config core.sshCommand 'ssh -i ~/.ssh/id_gh_read_only -F /dev/null'"
+    alias gitwrite="git config core.sshCommand 'ssh -i ~/.ssh/id_gh_write_read -F /dev/null'"
+    '''.replace('\t','')
+
+    subprocess.run(
+        f"ssh root@{remote_ip} 'echo {lines} >> /home/{args.username}/.bashrc'",
+        shell=True)
+
 
     # install fail2ban as root
     cmd = '''
