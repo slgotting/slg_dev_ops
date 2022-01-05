@@ -108,3 +108,17 @@ if __name__ == '__main__':
     run_remote_command(uname, ip, f'echo {password} | sudo -S npm install -g javascript-obfuscator')
     print_in_color_then_reset('\n\n---- NOW STARTING LINE 91 ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 -v /home/{uname}/{args.project_name}-mongo:/data/db -d mongo')
+
+    print('\n\n---- SCRIPT FINISHED SUCCESSFULLY ----\n\n')
+    print('''You should generate an SSH key (on the remote server) with:
+
+    $ ssh-keygen -q -t rsa -N '' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1
+
+    And then add a deploy key to the repository you are going to pull.
+
+    Copy the output of this command into the github deploy key section:
+
+    $ cat ~/.ssh/id_gh_read_only.pub
+
+    This has no passphrase assigned and is destined to be a read-only (or "deploy") key
+    ''')
