@@ -121,12 +121,6 @@ if __name__ == '__main__':
             f'ssh {args.username}@{remote_ip} "{cmd}"', shell=True)
         print('Node/npm successfully installed')
 
-    print(
-        f"\n\nNow you can login as {args.username}: ssh {args.username}@{remote_ip}!")
-
-    if args.docker:
-        print("\n\nTo start docker run systemctl start docker && systemctl enable docker")
-
     # add different git keys as aliases
     lines = '''
     alias gitread="git config --global core.sshCommand 'ssh -i ~/.ssh/id_gh_read_only -F /dev/null'"
@@ -136,6 +130,13 @@ if __name__ == '__main__':
     subprocess.run(
         f"ssh root@{remote_ip} 'echo {lines} >> /home/{args.username}/.bashrc'",
         shell=True)
+
+    print(
+        f"\n\nNow you can login as {args.username}: ssh {args.username}@{remote_ip}!")
+
+    if args.docker:
+        print("\n\nTo start docker run systemctl start docker && systemctl enable docker")
+
 
     # # copy github private ssh key from local machine to /Users/{args.username}/.ssh/ directory
     # print(
