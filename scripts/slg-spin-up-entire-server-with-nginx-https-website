@@ -117,6 +117,7 @@ if __name__ == '__main__':
     run_remote_command(uname, ip, f'ssh-keygen -q -t rsa -N \'\' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1')
     print("\n\nCopy the below string and paste into a deploy key in your project's repository:\n\n")
     run_remote_command(uname, ip, f'cat ~/.ssh/id_gh_read_only.pub')
+    run_remote_command(uname, ip, f"git config --global core.sshCommand 'ssh -i ~/.ssh/id_gh_read_only -F /dev/null'")
 
     input("\n\nWhen you've pasted in the above key press enter to continue. Or hit Ctrl-C if you don't wish to proceed in cloning your repo and performing initialization.")
 
