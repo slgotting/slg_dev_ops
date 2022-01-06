@@ -105,8 +105,6 @@ if __name__ == '__main__':
             print("Trying again in 5 seconds...", flush=True)
             time.sleep(5)
 
-print(frameinfo.filename, frameinfo.lineno)
-
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {frameinfo.lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-setup-tls-ssl-nginx {args.domain_name} -u {uname} -e {args.email_address}')
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {frameinfo.lineno} ----\n\n')
