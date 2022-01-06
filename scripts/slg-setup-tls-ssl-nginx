@@ -8,6 +8,8 @@ def get_arguments():
 
     parser.add_argument('domain_name', help='The domain name without www attached but with TLD attached, ie example.com')
 
+    parser.add_argument('project_name', help="The name of the project, or the repository's name")
+
     parser.add_argument('-u', '--username', type=str, required=True,
                         help='The user calling this script. Since this is run as sudo it is necessary')
 
@@ -49,7 +51,7 @@ def main(args):
     subprocess.run('sudo apt install -y certbot', shell=True)
     subprocess.run('sudo apt install -y python3-certbot-nginx', shell=True)
 
-    with open(f'/etc/nginx/conf.d/{domain_name}.conf', 'w+') as f:
+    with open(f'/etc/nginx/conf.d/{args.project_name}.conf', 'w+') as f:
         f.write(SERVER_CODE(domain_name, top_level_domain))
 
     subprocess.run('sudo nginx -t && sudo nginx -s reload', shell=True)
