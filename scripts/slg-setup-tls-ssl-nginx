@@ -5,6 +5,7 @@ import argparse
 
 def get_arguments():
     parser = argparse.ArgumentParser()
+    bools = parser.add_argument_group()
 
     parser.add_argument('domain_name', help='The domain name without www attached but with TLD attached, ie example.com')
 
@@ -15,6 +16,9 @@ def get_arguments():
 
     parser.add_argument('-e', '--email_address', type=str, required=True,
                         help='The email address to point LetsEncrypt to, so we can run the script non-interactively')
+
+    bools.add_argument('-t', '--testing', action='store_true',
+                       help='If ticked, we will use the staging environment for letsencrypt and certbot')
 
     args = parser.parse_args()
 
@@ -61,7 +65,8 @@ def main(args):
     if os.path.exists("/etc/nginx/sites-enabled/default"):
         os.remove("/etc/nginx/sites-enabled/default")
 
-    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos --email {args.email_address} -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
+    test = "--test-cert" if args.testing else ''
+    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos {test} --email {args.email_address} -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
 
     line="0 12 * * * /usr/bin/certbot renew --quiet"
     subprocess.run(f'(crontab -u {username} -l; echo "{line}" ) | crontab -u {username} -', shell=True)
