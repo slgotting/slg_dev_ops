@@ -37,7 +37,7 @@ def get_arguments():
     return args
 
 def run_remote_command(username, remote_ip, user_commands):
-    subprocess.run(
+    return subprocess.check_output(
         f'ssh {username}@{remote_ip} "{user_commands}"', shell=True)
     # an example command with sudo access
     # user_commands = f'''
@@ -52,7 +52,7 @@ def run_remote_command(username, remote_ip, user_commands):
 def run_local_command(command):
     subprocess.run(command, shell=True)
 
-def print_in_color_then_reset(print_string, color=Fore.BLUE):
+def print_in_color_then_reset(print_string, color=Fore.YELLOW):
     print(color + print_string, flush=True)
     print(Style.RESET_ALL, flush=True)
 
