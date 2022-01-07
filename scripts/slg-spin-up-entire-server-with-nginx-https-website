@@ -68,7 +68,16 @@ if __name__ == '__main__':
     )
 
     args = get_arguments()
-    print(args)
+
+    logger.info(f'''\nSpinning up server with the following configuration:
+        project_name: {args.project_name}
+        domain_name: {args.domain_name}
+        username: {args.username}
+        github_username: {args.github_username}
+        email_address: {args.email_address}
+        testing: {args.testing}
+        token: <hidden>
+    '''.replace('\t',''))
 
     test_flag = '-t' if args.testing else ''
 
