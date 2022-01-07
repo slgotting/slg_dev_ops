@@ -185,4 +185,4 @@ if __name__ == '__main__':
     run_remote_command(uname, ip, f'~/{args.project_name}/init.sh {password}')
 
     print(
-        f"\n\nNow you can login as {args.username}: ssh {args.username}@{args.remote_ip}!")
+        f"\n\nNow you can login as {args.username}: ssh {args.username}@{ip}!")
