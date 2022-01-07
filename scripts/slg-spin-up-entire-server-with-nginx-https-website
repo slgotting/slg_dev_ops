@@ -108,6 +108,9 @@ if __name__ == '__main__':
         ''')
         exit(0)
 
+    print('\n\nSleeping for 20 seconds while server boots up...\n\n', flush=True)
+    time.sleep(20)
+
 
     print("\n---- NOTE: this script will ask you for your password many times. This is for ease of development and shouldn't be cause for alarm ----\n")
 
