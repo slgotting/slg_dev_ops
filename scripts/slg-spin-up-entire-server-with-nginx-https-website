@@ -8,6 +8,7 @@ from colorama import Fore, Back, Style
 import requests
 import time
 from inspect import currentframe, getframeinfo
+from slg_dev_ops.digital_ocean_api import create_droplet, get_droplets_ip, add_domain_records, apply_firewall_to_droplet
 
 
 
@@ -28,9 +29,11 @@ def get_arguments():
 
     parser.add_argument('-g', '--github_username', help='Github username for pulling of project', required=True)
 
-    parser.add_argument('-r', '--remote_ip', help='IP address of the remote server', required=True)
+    # parser.add_argument('-r', '--remote_ip', help='IP address of the remote server', required=True)
 
     parser.add_argument('-e', '--email_address', help='Email address for LetsEncrypt', required=True)
+
+    parser.add_argument('-to', '--token', help='Digital Ocean Access Token for auto creation', required=True)
 
     bools.add_argument('-t', '--testing', action='store_true',
                        help='If ticked, will use testing values for certain commands')
@@ -72,11 +75,41 @@ if __name__ == '__main__':
     test_flag = '-t' if args.testing else ''
 
     uname = args.username
-    ip = args.remote_ip
+    # ip = args.remote_ip
 
-    input('\n ---- Create a digital ocean droplet of Ubuntu 20. Press any key to continue. ---- \n')
-    input('\n ---- Apply the firewall "slg-Automated-Website-Firewall" to the droplet. Press any key to continue. ---- \n')
-    input('\n ---- Now would also be a good time to point your domain to your IP on your domain hosting site. Press any key to continue. ---- \n')
+    input("""Set up your domain name's nameservers to point to digital ocean's nameservers to continue.
+
+    They are:
+
+        ns1.digitalocean.com
+        ns2.digitalocean.com
+        ns3.digitalocean.com
+
+    Once finished with setting up digital ocean to have control of your domain, press enter to proceed.
+    """)
+
+    logger.info('Creating droplet')
+    droplet_id = create_droplet(args.token, testing=args.testing)
+
+    logger.info("Getting newly created droplet's IP")
+    ip = get_droplets_ip(droplet_id, args.token)
+
+    logger.info('Adding domain records for droplet')
+    records = add_domain_records(ip, args.domain_name, args.token)
+
+    logger.info('Adding firewall rules to droplet')
+    firewall_resp = apply_firewall_to_droplet(droplet_id, args.token)
+
+    if not (records == 'Successfully created records for @, www' and firewall_resp):
+        logger.error(f'''Droplet was not created successfully:
+
+            droplet_id: {droplet_id}
+            ip: {ip}
+            records: {records}
+            firewall_resp: {firewall_resp}
+        ''')
+        exit(0)
+
 
     print("\n---- NOTE: this script will ask you for your password many times. This is for ease of development and shouldn't be cause for alarm ----\n")
 
