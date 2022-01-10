@@ -29,7 +29,7 @@ server {{
     listen 80 default_server;
     listen [::]:80 default_server;
     root /var/www/html;
-    server_name {dn}.{tld} www.{dn}.{tld};
+    server_name *.{dn}.{tld};
 }}
 '''
 
