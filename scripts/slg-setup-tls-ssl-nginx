@@ -33,6 +33,15 @@ server {{
 }}
 '''
 
+# STAGING_SERVER_CODE = lambda dn, tld: f'''
+# server {{
+#     listen 80 default_server;
+#     listen [::]:80 default_server;
+#     root /var/www/html;
+#     server_name {dn}.{tld} www.{dn}.{tld};
+# }}
+# '''
+
 def main(args):
     try:
         domain_name, top_level_domain = args.domain_name.split('.')
@@ -66,7 +75,7 @@ def main(args):
         os.remove("/etc/nginx/sites-enabled/default")
 
     test = "--test-cert" if args.testing else ''
-    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos {test} --email {args.email_address} -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain}', shell=True)
+    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos {test} --email {args.email_address} -d *.{domain_name}.{top_level_domain}', shell=True)
 
     line="0 12 * * * /usr/bin/certbot renew --quiet"
     subprocess.run(f'(crontab -u {username} -l; echo "{line}" ) | crontab -u {username} -', shell=True)
