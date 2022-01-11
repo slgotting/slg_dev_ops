@@ -86,24 +86,24 @@ def verify_filename(filename):
     # regex that matches acceptable filename characters only
 
 
-def parse_filename_as_cronjob(directory, filename):
+def parse_filename_as_timing_and_filepath(directory, filename):
     if not verify_filename(filename):
-        return False
+        return False, False
 
-    components = filename.split(' ')
-    filename = components.pop()
+    timing = filename.split(' ')
+    filename = timing.pop()
 
-    new_components = ''
-    for comp in components:
+    parsed_timing = ''
+    for comp in timing:
         for char in CHAR_MAPPING:
             comp = comp.replace(char, CHAR_MAPPING[char])
-        new_components += comp + ' '
+        parsed_timing += comp + ' '
 
     logger.info(filename)
-    logger.info(new_components)
+    logger.info(parsed_timing)
 
-    crontab_line = f'{new_components} python3 \"{directory}/{" ".join(components)} {filename}\"'
-    return crontab_line
+    filepath = f'\"{directory}/{" ".join(timing)} {filename}\"'
+    return parsed_timing, filepath
 
 
 
@@ -178,10 +178,12 @@ if __name__ == '__main__':
                     if file in IGNORE_FILES:
                         continue
                     try:
-                        crontab_line = parse_filename_as_cronjob(directory, file)
-                        if crontab_line:
+                        timing, filepath = parse_filename_as_timing_and_filepath(directory, file)
+                        if filepath:
                             if args.env_file:
-                                crontab_line = f'{line_beginning} {crontab_line}'
+                                crontab_line = f'{timing} {line_beginning} {filepath}'
+                            else:
+                                crontab_line = f'{timing} {filepath}'
                             crontab_lines.append(crontab_line)
                     except:
                         logger.exception(f"\n\nCouldn't create crontab line with:\n\nDirectory: {directory}\n\nFile: {file}\n\n")
