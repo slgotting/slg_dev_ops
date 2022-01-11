@@ -112,7 +112,7 @@ def add_domain_records(
     domain_name,
     do_token,
     type='A',
-    names=['@', 'www'],
+    names=['@', 'www', 'staging'],
     delete_existing_of_type=True,
 ):
     if delete_existing_of_type:
