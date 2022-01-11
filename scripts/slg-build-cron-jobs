@@ -39,6 +39,9 @@ def get_arguments():
 
     Visit https://crontab.guru/ for allowed values reference.
 
+    IMPORTANT: Any cronjobs built will be built with an environment in mind (if desired). Therefore any variables that are constant amongst cronjobs must be defined in the env file
+    IMPORTANT: Likewise, cronjobs will be built using the virtual environment version of python (passed in by argument) so that the proper requirements are passed in
+
     IMPORTANT: put any necessary modules/imports into a subdirectory called "modules" which won't be touched
     IMPORTANT: insert any logs in a subdirectory called "logs" to store logs that also won't be touched
 
@@ -50,6 +53,10 @@ def get_arguments():
 
     # REQUIRED string value
     parser.add_argument('-d', '--directory', required=True, help='Absolute path to the directory where cronjobs are stored (pwd while in directory to get path)')
+
+    parser.add_argument('-e', '--env_file', help='Absolute path to the .env file that houses environment variables (if needed)')
+
+    parser.add_argument('-v', '--virtual_environment_python', help='Absolute path to the virtual environment python3 binary. Example: /path/to/venv/bin/python3')
 
     # integer value
     parser.add_argument('-u', '--username', default='steven', type=str,
@@ -77,14 +84,6 @@ def verify_filename(filename):
     # regex = re.compile('^([esc0-9-]{1,5}_){4}[esc0-9-]{1,5}$ [a-z')
 
     # regex that matches acceptable filename characters only
-
-
-
-    if regex.match(filename):
-        return True
-    else:
-        return False
-
 
 
 def parse_filename_as_cronjob(directory, filename):
@@ -125,6 +124,12 @@ IGNORE_FILES = [
 if __name__ == '__main__':
     args = get_arguments()
     print(args)
+    line_beginning = ''
+    if args.env_file:
+        line_beginning += f'env - $(env; cat {args.env_file}) '
+    if args.virtual_environment_python:
+        line_beginning += args.virtual_environment_python
+
     try:
 
         # get all files and directories in directory
@@ -175,6 +180,8 @@ if __name__ == '__main__':
                     try:
                         crontab_line = parse_filename_as_cronjob(directory, file)
                         if crontab_line:
+                            if args.env_file:
+                                crontab_line = f'{line_beginning} {crontab_line}'
                             crontab_lines.append(crontab_line)
                     except:
                         logger.exception(f"\n\nCouldn't create crontab line with:\n\nDirectory: {directory}\n\nFile: {file}\n\n")

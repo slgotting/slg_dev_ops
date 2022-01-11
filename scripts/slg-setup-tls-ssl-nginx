@@ -29,18 +29,18 @@ server {{
     listen 80 default_server;
     listen [::]:80 default_server;
     root /var/www/html;
-    server_name *.{dn}.{tld};
+    server_name {dn}.{tld} www.{dn}.{tld};
 }}
 '''
 
-# STAGING_SERVER_CODE = lambda dn, tld: f'''
-# server {{
-#     listen 80 default_server;
-#     listen [::]:80 default_server;
-#     root /var/www/html;
-#     server_name {dn}.{tld} www.{dn}.{tld};
-# }}
-# '''
+STAGING_SERVER_CODE = lambda dn, tld: f'''
+server {{
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    root /var/www/html;
+    server_name staging.{dn}.{tld};
+}}
+'''
 
 def main(args):
     try:
@@ -67,6 +67,10 @@ def main(args):
     with open(f'/etc/nginx/conf.d/{args.project_name}.conf', 'w+') as f:
         f.write(SERVER_CODE(domain_name, top_level_domain))
 
+    # staging conf
+    with open(f'/etc/nginx/conf.d/staging-{args.project_name}.conf', 'w+') as f:
+        f.write(SERVER_CODE(domain_name, top_level_domain))
+
     subprocess.run('sudo nginx -t && sudo nginx -s reload', shell=True)
 
     if os.path.exists("/etc/nginx/conf.d/default.conf"):
@@ -75,7 +79,7 @@ def main(args):
         os.remove("/etc/nginx/sites-enabled/default")
 
     test = "--test-cert" if args.testing else ''
-    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos {test} --email {args.email_address} -d *.{domain_name}.{top_level_domain}', shell=True)
+    subprocess.run(f'sudo certbot --nginx --non-interactive --agree-tos {test} --email {args.email_address} -d {domain_name}.{top_level_domain} -d www.{domain_name}.{top_level_domain} -d staging.{domain_name}.{top_level_domain}', shell=True)
 
     line="0 12 * * * /usr/bin/certbot renew --quiet"
     subprocess.run(f'(crontab -u {username} -l; echo "{line}" ) | crontab -u {username} -', shell=True)
