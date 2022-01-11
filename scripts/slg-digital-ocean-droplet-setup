@@ -85,7 +85,7 @@ if __name__ == '__main__':
     user_commands = f'''
         echo {password} | sudo -S apt update &&
         echo {password} | sudo -S apt-get install -y python3-pip &&
-        pip3 install logger-slg && pip3 install slg-dev-ops &&
+        pip3 install logger-slg && pip3 install slg-dev-ops && pip3 install wheel &&
         echo {password} | sudo -S apt install -y python3-venv &&
         echo {password} | sudo -S chown -R {args.username} ~/.ssh/ &&
         echo {password} | sudo -S chmod 700 ~/.ssh/ &&
