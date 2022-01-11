@@ -13,7 +13,19 @@ from playsound import playsound
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='''
-        If you have initialization steps you want to take, make sure to name it "init.sh" and place it in the projects root
+If you have initialization steps you want to take, make sure to name it "init.sh" and place it in the projects root.
+
+Here is an example usage:
+
+slg-spin-up-entire-server-with-nginx-https-website \
+-to $(gpg -d ~/secrets/digitalocean-at.gpg) \
+-p twitch-clips \
+-d doodler.fun \
+-u steven \
+-g slgotting \
+-e sgotting21@gmail.com \
+-s /home/steven/Sounds/beep.mp3 \
+2>&1 | tee /var/log/slg/spin-up-entire-https/output-$(date "+%F-%H-%M-%S")
     ''', formatter_class=RawTextHelpFormatter)
 
     # argument groups can have their tickers combined (ie -su)
@@ -237,3 +249,5 @@ if __name__ == '__main__':
 
     print(
         f"\n\nNow you can login as {args.username}: ssh {args.username}@{ip}!")
+
+    if args.sound_file: playsound(args.sound_file)
