@@ -76,7 +76,7 @@ if __name__ == '__main__':
         github_username: {' ' * (16 - len('github_username'))}{args.github_username}
         email_address: {' ' * (16 - len('email_address'))}{args.email_address}
         testing: {' ' * (16 - len('testing'))}{args.testing}
-        token: {' ' * (16 - len('token'))}'<hidden>'
+        token: {' ' * (16 - len('token'))}<hidden>
     '''.replace('\t',''))
 
     test_flag = '-t' if args.testing else ''
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     logger.info('Adding firewall rules to droplet')
     firewall_resp = apply_firewall_to_droplet(droplet_id, args.token)
 
-    if not (records == 'Successfully created records for @, www' and firewall_resp):
+    if not (records == 'Successfully created records for @, www, staging' and firewall_resp):
         logger.error(f'''Droplet was not created successfully:
 
             droplet_id: {droplet_id}
