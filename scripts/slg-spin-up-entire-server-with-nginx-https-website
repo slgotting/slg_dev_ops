@@ -71,6 +71,26 @@ def print_in_color_then_reset(print_string, color=Fore.YELLOW):
     print(color + print_string, flush=True)
     print(Style.RESET_ALL, flush=True)
 
+def wait_til_domains_are_ready(subdomains=['', 'www', 'staging']):
+    for domain in subdomains:
+        if domain:
+            domain = domain + '.'
+        while True:
+            try:
+                resp = requests.get(f'http://{domain}{args.domain_name}')
+                if resp.status_code == 200:
+                    break
+                else:
+                    print(f"The subdomain \"{domain}\" is not ready. Make sure you've pointed the domain name to the new IP.", flush=True)
+                    print("Trying again in 5 seconds...", flush=True)
+                    time.sleep(5)
+            except:
+                print(f"The subdomain \"{domain}\" is not ready. Make sure you've pointed the domain name to the new IP.", flush=True)
+                print("Trying again in 5 seconds...", flush=True)
+                time.sleep(5)
+
+
+
 
 if __name__ == '__main__':
     logger = init_logger(
@@ -150,19 +170,9 @@ if __name__ == '__main__':
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'PATH=/home/steven/.local/bin:$PATH; slg-init-remote-crontab -u {uname}')
 
-    while True:
-        try:
-            resp = requests.get(f'http://{args.domain_name}')
-            if resp.status_code == 200:
-                break
-            else:
-                print("Domain name not ready. Make sure you've pointed the domain name to the new IP.", flush=True)
-                print("Trying again in 5 seconds...", flush=True)
-                time.sleep(5)
-        except:
-            print("Domain name not ready. Make sure you've pointed the domain name to the new IP.", flush=True)
-            print("Trying again in 5 seconds...", flush=True)
-            time.sleep(5)
+
+    wait_til_domains_are_ready(['', 'www', 'staging'])
+
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-setup-tls-ssl-nginx {args.domain_name} {args.project_name} -u {uname} -e {args.email_address} {test_flag}')
