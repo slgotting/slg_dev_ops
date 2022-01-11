@@ -29,16 +29,7 @@ server {{
     listen 80 default_server;
     listen [::]:80 default_server;
     root /var/www/html;
-    server_name {dn}.{tld} www.{dn}.{tld};
-}}
-'''
-
-STAGING_SERVER_CODE = lambda dn, tld: f'''
-server {{
-    listen 80 default_server;
-    listen [::]:80 default_server;
-    root /var/www/html;
-    server_name staging.{dn}.{tld};
+    server_name {dn}.{tld} www.{dn}.{tld} staging.{dn}.{tld};
 }}
 '''
 
@@ -65,10 +56,6 @@ def main(args):
     subprocess.run('sudo apt install -y python3-certbot-nginx', shell=True)
 
     with open(f'/etc/nginx/conf.d/{args.project_name}.conf', 'w+') as f:
-        f.write(SERVER_CODE(domain_name, top_level_domain))
-
-    # staging conf
-    with open(f'/etc/nginx/conf.d/staging-{args.project_name}.conf', 'w+') as f:
         f.write(SERVER_CODE(domain_name, top_level_domain))
 
     subprocess.run('sudo nginx -t && sudo nginx -s reload', shell=True)
