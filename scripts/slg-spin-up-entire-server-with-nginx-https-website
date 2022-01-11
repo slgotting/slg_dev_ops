@@ -41,8 +41,19 @@ def get_arguments():
     return args
 
 def run_remote_command(username, remote_ip, user_commands):
-    return subprocess.check_output(
-        f'ssh {username}@{remote_ip} "{user_commands}"', shell=True)
+    i=0
+    while i<5:
+        try:
+            return subprocess.check_output(
+                f'ssh {username}@{remote_ip} "{user_commands}"', shell=True)
+        except Exception as e:
+            i+=1
+            if i == 5:
+                logger.exception('Issue with command.')
+                exit(0)
+            logger.warn('Trying commands again in 5 seconds...')
+            time.sleep(5)
+
     # an example command with sudo access
     # user_commands = f'''
     #     echo {password} | sudo -S apt update &&
@@ -166,7 +177,7 @@ if __name__ == '__main__':
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S npm install -g javascript-obfuscator')
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
-    run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 -v /home/{uname}/{args.project_name}-mongo:/data/db -d mongo')
+    run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 -v /home/{uname}/mongo-{args.project_name}:/data/db -d mongo')
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'ssh-keygen -q -t rsa -N \'\' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1')
