@@ -9,7 +9,7 @@ import requests
 import time
 from inspect import currentframe, getframeinfo
 from slg_dev_ops.digital_ocean_api import create_droplet, get_droplets_ip, add_domain_records, apply_firewall_to_droplet
-
+from playsound import playsound
 
 def get_arguments():
     parser = argparse.ArgumentParser(description='''
@@ -32,6 +32,8 @@ def get_arguments():
     parser.add_argument('-e', '--email_address', help='Email address for LetsEncrypt', required=True)
 
     parser.add_argument('-to', '--token', help='Digital Ocean Access Token for droplet api calls', required=True)
+
+    parser.add_argument('-s', '--sound_file', help='If you wish to include the absolute path to a sound file to alert you when your input is needed. Not all inputs are accounted for.')
 
     bools.add_argument('-t', '--testing', action='store_true',
                        help='If ticked, will use testing values for certain commands')
@@ -79,6 +81,7 @@ def wait_til_domains_are_ready(subdomains=['', 'www', 'staging']):
             try:
                 resp = requests.get(f'http://{domain}{args.domain_name}')
                 if resp.status_code == 200:
+                    logger.info(f'Request succeeded for subdomain: "{domain}"')
                     break
                 else:
                     print(f"The subdomain \"{domain}\" is not ready. Make sure you've pointed the domain name to the new IP.", flush=True)
@@ -114,6 +117,8 @@ if __name__ == '__main__':
 
     uname = args.username
     # ip = args.remote_ip
+
+    if args.sound_file: playsound(args.sound_file)
 
     input("""Set up your domain name's nameservers to point to digital ocean's nameservers to continue.
 
@@ -154,6 +159,7 @@ if __name__ == '__main__':
 
     print("\n---- NOTE: this script will ask you for your password many times. This is for ease of development and shouldn't be cause for alarm ----\n")
 
+    if args.sound_file: playsound(args.sound_file)
     password = input('Please enter your password for sudo commands and the password of the user to be created: ')
 
 
@@ -172,7 +178,8 @@ if __name__ == '__main__':
 
 
     wait_til_domains_are_ready(['', 'www', 'staging'])
-
+    if args.sound_file: playsound(args.sound_file)
+    input("Press enter when you're good with domains being ready")
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-setup-tls-ssl-nginx {args.domain_name} {args.project_name} -u {uname} -e {args.email_address} {test_flag}')
@@ -196,6 +203,7 @@ if __name__ == '__main__':
     public_key = run_remote_command(uname, ip, f'cat ~/.ssh/id_gh_read_only.pub')
     print_in_color_then_reset(public_key.decode('utf-8'), color=Fore.MAGENTA)
 
+    if args.sound_file: playsound(args.sound_file)
     input("\n\nWhen you've pasted in the above key press enter to continue. Or hit Ctrl-C if you don't wish to proceed in cloning your repo and performing initialization.")
 
     GIT_RSA_FINGERPRINT = 'SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8'
