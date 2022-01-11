@@ -70,13 +70,13 @@ if __name__ == '__main__':
     args = get_arguments()
 
     logger.info(f'''\nSpinning up server with the following configuration:
-        project_name: {' ' * (18 - len('project_name')) + args.project_name}
-        domain_name: {' ' * (18 - len('domain_name')) + args.domain_name}
-        username: {' ' * (18 - len('username')) + args.username}
-        github_username: {' ' * (18 - len('github_username')) +args.github_username}
-        email_address: {' ' * (18 - len('email_address')) + args.email_address}
-        testing: {' ' * (18 - len('testing')) + args.testing}
-        token: {' ' * (18 - len('token')) + '<hidden>'}
+        project_name: {' ' * (16 - len('project_name'))}{args.project_name}
+        domain_name: {' ' * (16 - len('domain_name'))}{args.domain_name}
+        username: {' ' * (16 - len('username'))}{args.username}
+        github_username: {' ' * (16 - len('github_username'))}{args.github_username}
+        email_address: {' ' * (16 - len('email_address'))}{args.email_address}
+        testing: {' ' * (16 - len('testing'))}{args.testing}
+        token: {' ' * (16 - len('token'))}'<hidden>'
     '''.replace('\t',''))
 
     test_flag = '-t' if args.testing else ''
