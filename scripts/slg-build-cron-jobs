@@ -42,8 +42,10 @@ def get_arguments():
     IMPORTANT: Any cronjobs built will be built with an environment in mind (if desired). Therefore any variables that are constant amongst cronjobs must be defined in the env file
     IMPORTANT: Likewise, cronjobs will be built using the virtual environment version of python (passed in by argument) so that the proper requirements are passed in
 
+    IMPORTANT: RESERVED FOLDERS ARE "modules", "logs", "staging"
     IMPORTANT: put any necessary modules/imports into a subdirectory called "modules" which won't be touched
     IMPORTANT: insert any logs in a subdirectory called "logs" to store logs that also won't be touched
+    IMPORTANT: The folder "staging" is for any jobs that must be run for staging cronjobs (staging requirements are usually less demanding and thus demand separate jobs)
 
     Currently only supports Python3
     ''', formatter_class=RawTextHelpFormatter)
@@ -116,6 +118,7 @@ STARTSWITH_IGNORE_DIRS = [
 SPECIAL_DIRS = [
     'modules',
     'logs'
+    'staging'
 ]
 IGNORE_FILES = [
     '__init__.py'
