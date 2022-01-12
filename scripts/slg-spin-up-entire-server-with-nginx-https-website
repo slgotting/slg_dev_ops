@@ -195,6 +195,10 @@ if __name__ == '__main__':
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-setup-tls-ssl-nginx {args.domain_name} {args.project_name} -u {uname} -e {args.email_address} {test_flag}')
+
+    print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
+    run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-init-gunicorn-systemd-services /home/{uname}/{args.project_name} -u {uname} -s /home/{uname}/staging-{args.project_name}')
+
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S -E env "PATH=$PATH" slg-init-nginx-conf-gunicorn -f /etc/nginx/conf.d/{args.project_name}.conf -d {args.domain_name},www.{args.domain_name},staging.{args.domain_name}')
 
