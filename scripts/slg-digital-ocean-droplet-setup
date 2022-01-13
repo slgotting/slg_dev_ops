@@ -86,7 +86,10 @@ if __name__ == '__main__':
         echo {password} | sudo -S apt update &&
         echo {password} | sudo -S apt-get install -y python3-pip python3-wheel python3-venv &&
         pip3 install logger-slg && pip3 install slg-dev-ops && pip3 install wheel &&
-        echo {password} | sudo -S -u {args.username} mkdir -p /var/log/slg/cron &&
+        echo {password} | sudo -S mkdir -p /var/log/slg &&
+        echo {password} | sudo -S chown -R {args.username} /var/log/slg &&
+        echo {password} | sudo -S mkdir -p /var/log/slg/cron &&
+        echo {password} | sudo -S chown -R {args.username} /var/log/slg/cron &&
         echo {password} | sudo -S chown -R {args.username} ~/.ssh/ &&
         echo {password} | sudo -S chmod 700 ~/.ssh/ &&
         echo {password} | sudo -S chmod 600 ~/.ssh/*
