@@ -56,7 +56,7 @@ def get_arguments():
     # REQUIRED string value
     parser.add_argument('-d', '--directory', required=True, help='Absolute path to the directory where cronjobs are stored (pwd while in directory to get path)')
 
-    parser.add_argument('-e', '--env_file', help='Absolute path to the .env file that houses environment variables (if needed)')
+    parser.add_argument('-e', '--env_files', help='Comma separated list (NO SPACES IN BETWEEN) of absolute paths to all env files you wish to include')
 
     parser.add_argument('-v', '--virtual_environment_python', help='Absolute path to the virtual environment python3 binary. Example: /path/to/venv/bin/python3')
 
@@ -66,7 +66,7 @@ def get_arguments():
 
     bools.add_argument('-o', '--dont_overwrite_existing', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
 
-    bools.add_argument('-t', '--test_run_lines', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
+    bools.add_argument('-t', '--test_run_lines', action="store_true", help="Set this flag to enable testing of your cronjob lines")
 
     args = parser.parse_args()
 
@@ -130,8 +130,8 @@ if __name__ == '__main__':
     args = get_arguments()
     print(args)
     line_beginning = ''
-    if args.env_file:
-        line_beginning += f'env - $(env; cat {args.env_file}) '
+    if args.env_files:
+        line_beginning += f'env - $(add-to-env {args.env_files}) '
     if args.virtual_environment_python:
         line_beginning += args.virtual_environment_python
 
@@ -217,9 +217,12 @@ if __name__ == '__main__':
             logger.info('Beginning crontab line testing now')
             for line in test_crontab_lines:
                 try:
-                    subprocess.run(line, shell=True)
+                    output = subprocess.getstatusoutput(line)
+                    if output[0] != 0:
+                        raise Exception(output[1])
                 except:
                     logger.exception(f'There was an error running {line}')
+                    exit(1)
             logger.info('All crontab lines ran without error')
 
 

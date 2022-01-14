@@ -131,6 +131,11 @@ if __name__ == '__main__':
     alias gitwrite="git config --global core.sshCommand 'ssh -i ~/.ssh/id_gh_write_read -F /dev/null'"
     '''.replace('\t','')
 
+    # add some additional helping alias
+    lines += '''
+    alias act="source venv/bin/activate"
+    '''.replace('\t', '')
+
     subprocess.run(
         f"ssh root@{remote_ip} 'echo {lines} >> /home/{args.username}/.bashrc'",
         shell=True)
