@@ -66,6 +66,8 @@ def get_arguments():
 
     bools.add_argument('-o', '--dont_overwrite_existing', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
 
+    bools.add_argument('-t', '--test_run_lines', action="store_true", help="Tick to not overwrite lines that have the same filepath as an incoming addition")
+
     args = parser.parse_args()
 
     return args
@@ -140,6 +142,7 @@ if __name__ == '__main__':
 
         out_files = []
         crontab_lines = []
+        test_crontab_lines = []
         walk = os.walk(args.directory)
 
         while walk:
@@ -183,11 +186,9 @@ if __name__ == '__main__':
                     try:
                         timing, filepath = parse_filename_as_timing_and_filepath(directory, file)
                         if filepath:
-                            if args.env_file:
-                                crontab_line = f'{timing} {line_beginning} {filepath}'
-                            else:
-                                crontab_line = f'{timing} {filepath}'
+                            crontab_line = f'{timing} {line_beginning} {filepath}'
                             crontab_lines.append(crontab_line)
+                            test_crontab_lines.append(f'{line_beginning} {filepath}')
                     except:
                         logger.exception(f"\n\nCouldn't create crontab line with:\n\nDirectory: {directory}\n\nFile: {file}\n\n")
 
@@ -211,6 +212,17 @@ if __name__ == '__main__':
             # subprocess.run(f'(crontab -u $(whoami) -l; echo "{crontab_line}" ) | crontab -u $(whoami) -', shell=True)
 
         print("\n\n\n--------- This is a reminder that this script did not delete any existing lines that didn't exist in the directory. They shouldn't run but it wouldn't hurt to clean up once in a while ---------\n\n\n")
+
+        if args.test_run_lines:
+            logger.info('Beginning crontab line testing now')
+            for line in test_crontab_lines:
+                try:
+                    subprocess.run(line, shell=True)
+                except:
+                    logger.exception(f'There was an error running {line}')
+            logger.info('All crontab lines ran without error')
+
+
 
     except:
         logger.exception('Something went wrong')
