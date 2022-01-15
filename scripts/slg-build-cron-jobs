@@ -225,5 +225,8 @@ if __name__ == '__main__':
                     exit(1)
             logger.info('All crontab lines ran without error')
 
+        logger.info("Consolidating newline's")
+        subprocess.run(f"(crontab -u $(whoami) -l | sed '/^$/N;/^\n$/D' | crontab -u $(whoami) -", shell=True)
+
     except:
         logger.exception('Something went wrong')
