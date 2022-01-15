@@ -119,8 +119,8 @@ STARTSWITH_IGNORE_DIRS = [
 ]
 SPECIAL_DIRS = [
     'modules',
-    'logs'
-    'staging'
+    'logs',
+    'staging',
 ]
 IGNORE_FILES = [
     '__init__.py'
@@ -224,8 +224,6 @@ if __name__ == '__main__':
                     logger.exception(f'There was an error running {line}')
                     exit(1)
             logger.info('All crontab lines ran without error')
-
-
 
     except:
         logger.exception('Something went wrong')
