@@ -181,7 +181,7 @@ if __name__ == '__main__':
     run_local_command(f'slg-digital-ocean-droplet-setup -r {ip} -u {uname} -dn')
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
-    run_remote_command(uname, ip, f'echo {password} | sudo -S -u {uname} mkdir -p /var/log/slg/cron && echo {password} | sudo -S chown -R {args.username}:{args.username} /var/log/slg/cron')
+    run_remote_command(uname, ip, f'echo {password} | sudo -S mkdir -p /var/log/slg/cron && echo {password} | sudo -S chown -R {args.username}:{args.username} /var/log/slg/cron')
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'PATH=/home/steven/.local/bin:$PATH; echo {password} | sudo -S -E env "PATH=$PATH" slg-install-nginx')
