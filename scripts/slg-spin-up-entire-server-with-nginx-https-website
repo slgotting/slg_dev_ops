@@ -134,6 +134,8 @@ if __name__ == '__main__':
 
     input("""Set up your domain name's nameservers to point to digital ocean's nameservers to continue.
 
+    You also need to add the domain at this location https://cloud.digitalocean.com/networking/domains
+
     They are:
 
         ns1.digitalocean.com
@@ -241,11 +243,13 @@ if __name__ == '__main__':
     # pull a production version of the site, and run associated installs
     run_remote_command(uname, ip, f'git clone --recurse-submodules git@github.com:{args.github_username}/{args.project_name}.git')
     run_remote_command(uname, ip, f'python3 -m venv /home/{uname}/{args.project_name}/venv')
+    run_remote_command(uname, ip, f'/home/{uname}/{args.project_name}/venv/bin/pip3 install wheel')
     run_remote_command(uname, ip, f'/home/{uname}/{args.project_name}/venv/bin/pip3 install -r /home/{uname}/{args.project_name}/requirements.txt')
 
     # pull to a staging location as well
     run_remote_command(uname, ip, f'git clone --recurse-submodules git@github.com:{args.github_username}/{args.project_name}.git staging-{args.project_name}')
     run_remote_command(uname, ip, f'python3 -m venv /home/{uname}/staging-{args.project_name}/venv')
+    run_remote_command(uname, ip, f'/home/{uname}/staging-{args.project_name}/venv/bin/pip3 install wheel')
     run_remote_command(uname, ip, f'/home/{uname}/staging-{args.project_name}/venv/bin/pip3 install -r /home/{uname}/staging-{args.project_name}/requirements.txt')
 
     # run the initialization script in the repository
