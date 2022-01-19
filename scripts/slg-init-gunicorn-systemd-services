@@ -40,7 +40,6 @@ After=network.target
 User={args.username}
 Group=www-data
 WorkingDirectory={args.project_path}
-EnvironmentFile={args.project_path}/.production_env
 ExecStart={args.project_path}/venv/bin/gunicorn --bind 127.0.0.1:5000 -w 1 wsgi:app --access-logfile {args.project_path}/gunicorn-access.log --error-logfile {args.project_path}/gunicorn-error.log
 
 [Install]
@@ -70,7 +69,6 @@ After=network.target
 User={args.username}
 Group=www-data
 WorkingDirectory={args.staging_project_path}
-EnvironmentFile={args.staging_project_path}/.staging_env
 ExecStart={args.staging_project_path}/venv/bin/gunicorn --bind 127.0.0.1:5001 -w 1 wsgi:app --access-logfile {args.staging_project_path}/gunicorn-access.log --error-logfile {args.staging_project_path}/gunicorn-error.log
 
 [Install]
