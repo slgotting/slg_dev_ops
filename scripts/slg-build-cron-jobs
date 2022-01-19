@@ -82,13 +82,10 @@ def verify_filename(filename):
     else:
         return True
 
-
-
     # regex that verifies  "e_e_e_e_e filename.py"
     # regex = re.compile('^([esc0-9-]{1,5}_){4}[esc0-9-]{1,5}$ [a-z')
 
     # regex that matches acceptable filename characters only
-
 
 def parse_filename_as_timing_and_filepath(directory, filename):
     if not verify_filename(filename):
