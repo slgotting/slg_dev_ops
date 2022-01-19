@@ -185,6 +185,7 @@ if __name__ == '__main__':
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'PATH=/home/steven/.local/bin:$PATH; slg-init-remote-crontab -u {uname}')
 
+    run_remote_command(uname, ip, f'echo {password} | sudo -S mkdir -p /var/log/usr && echo {password} | sudo -S chown -R {uname}:{uname} /var/log/usr')
 
     wait_til_domains_are_ready(['', 'www', 'staging'])
     if args.sound_file: playsound(args.sound_file)
