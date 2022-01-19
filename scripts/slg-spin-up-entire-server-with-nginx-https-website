@@ -248,8 +248,8 @@ if __name__ == '__main__':
     run_remote_command(uname, ip, f'/home/{uname}/staging-{args.project_name}/venv/bin/pip3 install -r /home/{uname}/staging-{args.project_name}/requirements.txt')
 
     # copy config.ini from local machine to staging and production locations
-    run_local_command(f'scp /home/{uname}/config.ini {uname}@{ip}:/home/{uname}/staging-{args.project_name}')
-    run_local_command(f'scp /home/{uname}/config.ini {uname}@{ip}:/home/{uname}/production-{args.project_name}')
+    run_local_command(f'scp /home/{uname}/{args.project_name}/config.ini {uname}@{ip}:/home/{uname}/staging-{args.project_name}')
+    run_local_command(f'scp /home/{uname}/{args.project_name}/config.ini {uname}@{ip}:/home/{uname}/production-{args.project_name}')
 
     # run the initialization script in the repository
     run_remote_command(uname, ip, f'~/production-{args.project_name}/init.sh {password}')
