@@ -3,6 +3,7 @@ import subprocess
 import os
 import argparse
 import time
+from playsound import playsound
 
 
 def get_arguments():
@@ -16,6 +17,8 @@ def get_arguments():
 
     parser.add_argument('-r', '--remote_ip',
                         help='Remote IP of the machine were connecting to.')
+
+    parser.add_argument('-s', '--sound_file', help='If you wish to include the absolute path to a sound file to alert you when your input is needed. Not all inputs are accounted for.')
 
     bools.add_argument('-d', '--docker', action='store_true',
                        help='should we install docker?')
@@ -80,6 +83,7 @@ if __name__ == '__main__':
         shell=True)
 
     time.sleep(1)
+    if args.sound_file: playsound(args.sound_file)
     password = input('Enter sudo password for user setup: ')
     time.sleep(1)
     user_commands = f'''
