@@ -84,10 +84,10 @@ if __name__ == '__main__':
     time.sleep(1)
     user_commands = f'''
         echo {password} | sudo -S apt update &&
-        echo {password} | sudo -S apt-get install gcc libpq-dev -y
+        echo {password} | sudo -S apt-get install gcc libpq-dev -y &&
         echo {password} | sudo -S apt-get install python3-dev python3-pip python3-venv python3-wheel -y &&
         pip3 install wheel &&
-        pip3 install logger-slg && pip3 install slg-dev-ops &&
+        pip3 install logger-slg && pip3 install slg_dev_ops &&
         echo {password} | sudo -S mkdir -p /var/log/slg &&
         echo {password} | sudo -S chown -R {args.username}:{args.username} /var/log/slg &&
         echo {password} | sudo -S mkdir -p /var/log/slg/cron &&
