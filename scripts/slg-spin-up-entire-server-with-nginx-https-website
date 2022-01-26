@@ -209,7 +209,7 @@ if __name__ == '__main__':
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'echo {password} | sudo -S npm install -g javascript-obfuscator')
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
-    run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 -v /home/{uname}/mongo-{args.project_name}:/data/db -d mongo')
+    run_remote_command(uname, ip, f'echo {password} | sudo -S docker run -p 27017:27017 --restart unless-stopped -v /home/{uname}/mongo-{args.project_name}:/data/db -d mongo')
 
     print_in_color_then_reset(f'\n\n---- NOW STARTING LINE {getframeinfo(currentframe()).lineno} ----\n\n')
     run_remote_command(uname, ip, f'ssh-keygen -q -t rsa -N \'\' -f ~/.ssh/id_gh_read_only <<<y >/dev/null 2>&1')
