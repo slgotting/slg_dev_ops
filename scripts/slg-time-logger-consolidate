@@ -101,6 +101,8 @@ if __name__ == '__main__':
             consolidated_json_obj = {}
 
         for date in json_obj:
+            if date not in consolidated_json_obj:
+                consolidated_json_obj[date] = {}
             consolidated_json_obj[date].update(out_json_obj[date])
 
         fo.write_json(consolidated_json_obj, filename=consolidated_filename)
