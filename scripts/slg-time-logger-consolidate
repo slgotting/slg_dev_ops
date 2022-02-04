@@ -31,10 +31,13 @@ def get_arguments():
 
     return args
 
-# CONFIG OPTIONS
+
+#########################
+### CONFIG OPTIONS
+#########################
 
 # DynamicPageTitles:
-#     TagName: StringToMatch
+#     StringToMatch: TagName
 #        INFO: tag name is the title to consolidate to if this string is found in the title
 
 
@@ -83,7 +86,7 @@ if __name__ == '__main__':
                 window_open = json_obj[date][key]
 
                 # handle if there are special key names
-                for tag, string in config.get('DynamicPageTitles', {}).items():
+                for string, tag in config.get('DynamicPageTitles', {}).items():
                     if string in window_open:
                         window_open = tag
                         break
