@@ -25,6 +25,9 @@ def get_arguments():
     parser.add_argument('-s', '--sleep_time', default=1, type=float,
                         help='How long should sleep be between each log.')
 
+    parser.add_argument('-i', '--time_til_idle', default=15000, type=int,
+                        help='How long we should wait before we consider the user idle. (in milliseconds)')
+
     parser.add_argument('-c', '--config_filepath', default='/home/steven/.config/slg/time_log.yml',
                         help='Filepath of the config file we are using')
 
@@ -63,11 +66,11 @@ def write_output(output, fo, date, time_):
 
 
 
-def check_if_idle(output, idle_ignore_strings):
+def check_if_idle(output, time_til_idle, idle_ignore_strings):
     idle_time = int(subprocess.check_output(f"xprintidle", shell=True).strip().decode('utf-8'))
     # assume idle til proven otherwise
     idle = True
-    if idle_time > 10000:
+    if idle_time > time_til_idle:
         for str_ in idle_ignore_strings:
             if str_ in output:
                 idle = False
@@ -111,6 +114,7 @@ if __name__ == '__main__':
             log_level='INFO',
             stream_log_level='INFO',
         )
+        logger.info('Using arguments: %s', pformat(args))
 
         # read the config file
         try:
@@ -150,7 +154,7 @@ if __name__ == '__main__':
             except:
                 logger.exception('issue calling "xdotool getwindowfocus getwindowname"')
 
-            output = check_if_idle(output, idle_ignore_strings)
+            output = check_if_idle(output, args.time_til_idle, idle_ignore_strings)
 
             logger.debug(output)
             write_output(output, fo, date, time_)
