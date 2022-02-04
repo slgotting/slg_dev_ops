@@ -78,7 +78,14 @@ def check_if_idle(output, idle_ignore_strings):
 
 def check_for_overrides(overrides, fo, date, time_):
     continue_while_loop = False
-    all_windows = subprocess.check_output(['wmctrl', '-l']).decode('utf-8').split('\n')
+    try:
+        all_windows = subprocess.check_output(['wmctrl', '-l']).decode('utf-8').split('\n')
+    except subprocess.CalledProcessError:
+        logger.info('No windows open')
+        return False # dont continue the while loop
+    except:
+        logger.exception('issue calling "wmctrl -l"')
+
     for str_to_match in config.get('OverrideAll', {}):
         for active_window in all_windows:
             window_title = ' '.join(active_window.split(' ')[4:])
@@ -134,7 +141,15 @@ if __name__ == '__main__':
                 time.sleep(args.sleep_time)
                 continue
 
-            output = subprocess.check_output(f"xdotool getwindowfocus getwindowname", shell=True).strip().decode('utf-8')
+            try:
+                output = subprocess.check_output(f"xdotool getwindowfocus getwindowname", shell=True).strip().decode('utf-8')
+            except subprocess.CalledProcessError:
+                logger.exception('"xdotool getwindowfocus getwindowname" failed')
+                time.sleep(args.sleep_time)
+                continue
+            except:
+                logger.exception('issue calling "xdotool getwindowfocus getwindowname"')
+
             output = check_if_idle(output, idle_ignore_strings)
 
             logger.debug(output)
