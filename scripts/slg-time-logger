@@ -25,7 +25,7 @@ def get_arguments():
     parser.add_argument('-s', '--sleep_time', default=1, type=float,
                         help='How long should sleep be between each log.')
 
-    parser.add_argument('-i', '--time_til_idle', default=15000, type=int,
+    parser.add_argument('-i', '--time_til_idle', default=30000, type=int,
                         help='How long we should wait before we consider the user idle. (in milliseconds)')
 
     parser.add_argument('-c', '--config_filepath', default='/home/steven/.config/slg/time_log.yml',
