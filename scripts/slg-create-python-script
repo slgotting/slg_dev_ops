@@ -14,8 +14,8 @@ def get_arguments():
     parser.add_argument('script_name', help="Name of the script")
 
     parser.add_argument(
-        '-d', '--directory', default='$HOME/bin/',
-        help='The location of where this script should go (default is $HOME/bin')
+        '-d', '--directory', default='$HOME/.local/bin/',
+        help='The location of where this script should go (default is $HOME/.local/bin')
 
     # optional string value
     parser.add_argument('-u', '--username', default="steven",
