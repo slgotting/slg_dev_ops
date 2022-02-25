@@ -13,9 +13,6 @@ import json
 def get_arguments():
     parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
 
-    # argument groups can have their tickers combined (ie -su)
-    bools = parser.add_argument_group()
-
     parser.add_argument('-o', '--output_filepath', default='/var/log/slg/time_log.json',
                         help='Where we should log the times. Must be absolute path')
 
