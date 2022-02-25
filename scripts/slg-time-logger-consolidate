@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 import json
-import subprocess
-import os
 import argparse
 from argparse import RawTextHelpFormatter
 from logger_slg import init_logger
 import datetime
-from slg_utilities import FileOperations
-import time
 import yaml
 from pprint import pformat
 
@@ -15,11 +11,8 @@ from pprint import pformat
 def get_arguments():
     parser = argparse.ArgumentParser(description='', formatter_class=RawTextHelpFormatter)
 
-    # argument groups can have their tickers combined (ie -su)
-    bools = parser.add_argument_group()
-
     parser.add_argument('-i', '--input_filepath', default='/var/log/slg/time_log.json',
-                        help='Location of the time log were consolidating')
+                        help='Location of the time log were consolidating. Must be absolute path')
 
     parser.add_argument('-c', '--config_filepath', default='/home/steven/.config/slg/time_log.yml',
                         help='Filepath of the config file we are using')
@@ -41,6 +34,14 @@ def get_arguments():
 #        INFO: tag name is the title to consolidate to if this string is found in the title
 
 
+def write_json(data: dict, filepath):
+    with open(filepath, 'w') as outfile:
+        json.dump(data, outfile)
+
+def read_json(filepath):
+    with open(filepath, 'r') as f:
+        output = json.load(f)
+    return output
 
 
 if __name__ == '__main__':
@@ -63,52 +64,46 @@ if __name__ == '__main__':
         except FileNotFoundError:
             logger.exception('Config file not found. Proceeding with defaults')
 
-        abs_file_location = args.input_filepath
+        abs_filepath = args.input_filepath
 
-        directory = '/'.join(abs_file_location.split('/')[:-1])
-        filename = abs_file_location.split('/')[-1]
+        directory = '/'.join(abs_filepath.split('/')[:-1])
+        filename = abs_filepath.split('/')[-1]
         consolidated_filename = filename.split('.')[0] + '-consolidated.json'
 
-        fo = FileOperations(working_directory=directory, default_filename=filename)
-
         dt = datetime.datetime.now() - datetime.timedelta(minutes=args.run_interval)
-        date = dt.strftime('%Y-%m-%d')
-        time_ = (dt).strftime('%H:%M:%S')
+        date_ = dt.strftime('%Y-%m-%d')
+        time_ = dt.strftime('%H:%M:%S')
 
-        json_obj = fo.read_json()
-        out_json_obj = {}
-        for date in json_obj:
-            out_json_obj[date] = {}
-            out_json_obj[date][time_] = {}
-            object_ref = out_json_obj[date][time_]
-            for key in json_obj[date]:
+        time_log = read_json(abs_filepath)
+        consolidated_time_log = {date_: {time_: {}}}
 
-                window_open = json_obj[date][key]
+        for date in time_log:
+            for open_window in time_log[date].values():
 
                 # handle if there are special key names
                 for string, tag in config.get('DynamicPageTitles', {}).items():
-                    if string in window_open:
-                        window_open = tag
+                    if string in open_window:
+                        open_window = tag
                         break
 
-                if window_open not in object_ref:
-                    object_ref[window_open] = 1
+                if open_window not in consolidated_time_log[date_][time_]:
+                    consolidated_time_log[date_][time_][open_window] = 1
                 else:
-                    object_ref[window_open] += 1
-
-        fo.write_json({})
+                    consolidated_time_log[date_][time_][open_window] += 1
 
         try:
-            consolidated_json_obj = fo.read_json(filename=consolidated_filename)
+            existing_consolidated_log = read_json(consolidated_filename)
         except FileNotFoundError:
-            consolidated_json_obj = {}
+            existing_consolidated_log = {}
 
-        for date in json_obj:
-            if date not in consolidated_json_obj:
-                consolidated_json_obj[date] = {}
-            consolidated_json_obj[date].update(out_json_obj[date])
+        if date_ not in existing_consolidated_log:
+            existing_consolidated_log[date_] = {}
+        existing_consolidated_log[date_].update(consolidated_time_log[date_])
 
-        fo.write_json(consolidated_json_obj, filename=consolidated_filename)
+        write_json(existing_consolidated_log, consolidated_filename)
+
+        # clear the time_log after consolidating
+        write_json({}, abs_filepath)
 
     except:
         logger.exception('An error occurred')
