@@ -100,7 +100,7 @@ if __name__ == '__main__':
             existing_consolidated_log[date_] = {}
         existing_consolidated_log[date_].update(consolidated_time_log[date_])
 
-        write_json(existing_consolidated_log, consolidated_filename)
+        write_json(existing_consolidated_log, directory + '/' + consolidated_filename)
 
         # clear the time_log after consolidating
         write_json({}, abs_filepath)
