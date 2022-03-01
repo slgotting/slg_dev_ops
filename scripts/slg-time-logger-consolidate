@@ -75,7 +75,16 @@ if __name__ == '__main__':
         time_ = dt.strftime('%H:%M:%S')
 
         time_log = read_json(abs_filepath)
-        consolidated_time_log = {date_: {time_: {}}}
+
+        try:
+            existing_consolidated_log = read_json(consolidated_filename)
+        except FileNotFoundError:
+            existing_consolidated_log = {}
+
+        consolidated_time_log = existing_consolidated_log
+        if date_ not in consolidated_time_log:
+            consolidated_time_log[date_] = {}
+        consolidated_time_log[date_][time_] = {}
 
         for date in time_log:
             for open_window in time_log[date].values():
@@ -91,16 +100,8 @@ if __name__ == '__main__':
                 else:
                     consolidated_time_log[date_][time_][open_window] += 1
 
-        try:
-            existing_consolidated_log = read_json(consolidated_filename)
-        except FileNotFoundError:
-            existing_consolidated_log = {}
 
-        if date_ not in existing_consolidated_log:
-            existing_consolidated_log[date_] = {}
-        existing_consolidated_log[date_].update(consolidated_time_log[date_])
-
-        write_json(existing_consolidated_log, directory + '/' + consolidated_filename)
+        write_json(consolidated_time_log, directory + '/' + consolidated_filename)
 
         # clear the time_log after consolidating
         write_json({}, abs_filepath)
