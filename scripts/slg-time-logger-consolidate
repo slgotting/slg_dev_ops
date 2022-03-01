@@ -69,6 +69,7 @@ if __name__ == '__main__':
         directory = '/'.join(abs_filepath.split('/')[:-1])
         filename = abs_filepath.split('/')[-1]
         consolidated_filename = filename.split('.')[0] + '-consolidated.json'
+        consolidated_abs_filepath = directory + '/' + consolidated_filename
 
         dt = datetime.datetime.now() - datetime.timedelta(minutes=args.run_interval)
         date_ = dt.strftime('%Y-%m-%d')
@@ -77,7 +78,7 @@ if __name__ == '__main__':
         time_log = read_json(abs_filepath)
 
         try:
-            existing_consolidated_log = read_json(consolidated_filename)
+            existing_consolidated_log = read_json(consolidated_abs_filepath)
         except FileNotFoundError:
             existing_consolidated_log = {}
 
@@ -101,7 +102,7 @@ if __name__ == '__main__':
                     consolidated_time_log[date_][time_][open_window] += 1
 
 
-        write_json(consolidated_time_log, directory + '/' + consolidated_filename)
+        write_json(consolidated_time_log, consolidated_abs_filepath)
 
         # clear the time_log after consolidating
         write_json({}, abs_filepath)
