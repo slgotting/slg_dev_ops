@@ -2,7 +2,6 @@
 import subprocess
 import os
 import argparse
-from slg_dev_ops.digital_ocean_api import create_droplet, get_droplets_ip, add_domain_records, apply_firewall_to_droplet
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -56,7 +55,6 @@ def main(args):
     if not args.add_domain_records:
         input("\nMake sure you've pointed the subdomains in your DNS provider to the IP of the server this is running on. \n\n\nPress enter to continue...")
 
-    print(SERVER_CODE(args.sub_domains.split(','), domain_name, top_level_domain))
     username = args.username
 
     # password = input('Enter sudo password for sudo commands: ')
@@ -73,7 +71,7 @@ def main(args):
     subprocess.run('sudo apt install -y python3-certbot-nginx', shell=True)
 
     with open(f'/etc/nginx/conf.d/{args.project_name}.conf', 'w+') as f:
-        f.write(SERVER_CODE(domain_name, top_level_domain))
+        f.write(SERVER_CODE(args.sub_domains.split(','), domain_name, top_level_domain))
 
     subprocess.run('sudo nginx -t && sudo nginx -s reload', shell=True)
 
