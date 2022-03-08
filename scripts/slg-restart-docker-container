@@ -11,7 +11,7 @@ from pprint import pformat
 # and required=True in the argparse arguments would not allow that to happen.
 # So from now on I'm using these two sections to verify arguments are up to standard
 REQUIRED_ARGUMENTS = []
-SENSITIVE_ARGUMENTS = [] # place any passwords or other sensitive arguments in here to not expose them in configuration printing
+SENSITIVE_ARGUMENTS = ['sudo_password'] # place any passwords or other sensitive arguments in here to not expose them in configuration printing
 SPECIAL_REQUIREMENTS = { # variable must return a truthy value for these lambda functions in order to proceed with running the script; follow the example requirements precedence for setting new requirements
     'config_filepath': [
         {
@@ -111,6 +111,7 @@ if __name__ == '__main__':
         logger.info(f'\nUsing configuration:\n\n{pformat(sensitive_stripped_config)}')
 
         subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker stop {config.get('container_name')}", shell=True)
+        subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker rm {config.get('container_name')}", shell=True)
         subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker run -p {config.get('port')}:80 --name {config.get('container_name')} -d {config.get('image')}:{config.get('tag')}", shell=True)
 
     except:
