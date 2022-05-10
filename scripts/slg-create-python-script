@@ -43,6 +43,9 @@ from pprint import pformat
 # and required=True in the argparse arguments would not allow that to happen.
 # So from now on I'm using these two sections to verify arguments are up to standard
 REQUIRED_ARGUMENTS = []
+DYNAMIC_DEFAULTS = {{ # If an argument is defaulted to a derivative of a previous required argument, we can set a lambda of said required argument
+    'config_filepath': lambda username: f'/home/{{username}}/.config/slg/time_log.yml', # in this case, username is seen as the only required argument that was previously passed
+}}
 SENSITIVE_ARGUMENTS = [] # place any passwords or other sensitive arguments in here to not expose them in configuration printing
 SPECIAL_REQUIREMENTS = {{ # variable must return a truthy value for these lambda functions in order to proceed with running the script; follow the example requirements precedence for setting new requirements
     'config_filepath': [
@@ -81,16 +84,26 @@ def get_arguments():
 
     return args
 
+def get_dynamic_default_arg(args, desired_arg):
+    parameters = DYNAMIC_DEFAULTS[desired_arg].__code__.co_varnames
+    parameter_values = [args[arg] for arg in parameters]
+    return DYNAMIC_DEFAULTS[desired_arg](*parameter_values)
+
 def build_true_configuration(args, config_filepath=None):
     # arguments defined at the command line take precedence over config file variables
     config = {{}}
     if config_filepath:
         config = read_config_file(config_filepath)
 
-    dict_args = args.__dict__
+    dict_args = var(args)
     for arg in dict_args:
         if dict_args[arg] is not None:
             config[arg] = dict_args[arg]
+
+    # handle for dynamic defaults if no value is set
+    for arg in DYNAMIC_DEFAULTS:
+        if not config.get(arg):
+            config[arg] = get_dynamic_default_arg(config, arg)
 
     return config
 
