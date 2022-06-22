@@ -3,6 +3,7 @@ import subprocess
 import os
 import argparse
 from logger_slg import init_logger
+from os.path import expanduser
 
 def get_arguments():
     parser = argparse.ArgumentParser()
@@ -14,8 +15,8 @@ def get_arguments():
     parser.add_argument('script_name', help="Name of the script")
 
     parser.add_argument(
-        '-d', '--directory', default='$HOME/.local/bin/',
-        help='The location of where this script should go (default is $HOME/.local/bin')
+        '-d', '--directory', default='~/.local/bin',
+        help='The location of where this script should go (default is ~/.local/bin')
 
     # optional string value
     parser.add_argument('-u', '--username', default="steven",
@@ -167,7 +168,8 @@ if __name__ == "__main__":
         log_path=f'/var/log/slg/{__file__.split("/")[-1]}.log',
     )
     try:
-        directory = args.directory[:-1] if args.directory.endswith('/') else args.directory
+        directory = expanduser(args.directory[:-1]) if args.directory.endswith('/') else expanduser(args.directory)
+        print(directory)
         result = subprocess.check_output(f"sudo -u {args.username} echo \"{TEMPLATE(script_name)}\" > '{directory}/{script_name}'", shell=True)
 
         # this line makes sure that it ran properly; otherwise it will error out quietly
