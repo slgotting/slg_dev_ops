@@ -96,7 +96,7 @@ def build_true_configuration(args, config_filepath=None):
     if config_filepath:
         config = read_config_file(config_filepath)
 
-    dict_args = var(args)
+    dict_args = vars(args)
     for arg in dict_args:
         if dict_args[arg] is not None:
             config[arg] = dict_args[arg]
