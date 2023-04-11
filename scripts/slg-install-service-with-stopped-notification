@@ -72,12 +72,9 @@ def build_true_configuration(args, config_filepath=None):
     return config
 
 def install_cfg():
-    import os
-
-    home = os.path.expanduser("~")
-    if not os.path.exists(f'{home}/.config/slg/slg-send-text-message.yml'):
-        os.makedirs(f'{home}/.config/slg')
-        with open(f'{home}/.config/slg/slg-send-text-message.yml', 'w') as f:
+    if not os.path.exists(f'/home/steven/.config/slg/slg-send-text-message.yml'):
+        os.makedirs(f'/home/steven/.config/slg')
+        with open(f'/home/steven/.config/slg/slg-send-text-message.yml', 'w') as f:
             f.write('phone_carrier: "tmobile"\nsending_email: "sgotting21@gmail.com"\nsubject: "Automated Message"\nphone_number: 8139438388\napp: "crhxswwrytfxuzkr"')
 
 def strip_sensitive_arguments(config):
