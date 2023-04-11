@@ -71,6 +71,15 @@ def build_true_configuration(args, config_filepath=None):
 
     return config
 
+def install_cfg():
+    import os
+
+    home = os.path.expanduser("~")
+    if not os.path.exists(f'{home}/.config/slg/slg-send-text-message.yml'):
+        os.makedirs(f'{home}/.config/slg')
+        with open(f'{home}/.config/slg/slg-send-text-message.yml', 'w') as f:
+            f.write('phone_carrier: "tmobile"\nsending_email: "sgotting21@gmail.com"\nsubject: "Automated Message"\nphone_number: 8139438388\napp: "crhxswwrytfxuzkr"')
+
 def strip_sensitive_arguments(config):
     return {k: v for k, v in config.items() if k not in SENSITIVE_ARGUMENTS}
 
@@ -120,6 +129,7 @@ if __name__ == '__main__':
 
         subprocess.run(["sudo", "apt-get", "install", "-y", "systemd"])
         subprocess.run(["sudo", "pip", "install", "miscellaneous-slg"])
+        install_cfg()
         user = config.get("user")
         group = config.get("group", user)
         service_name = config.get('service_name')
@@ -187,12 +197,3 @@ WantedBy=multi-user.target
 
     except:
         logger.exception('An error occurred')
-
-def install_cfg():
-    import os
-
-    home = os.path.expanduser("~")
-    if not os.path.exists(f'{home}/.config/slg/slg-send-text-message.yml'):
-        os.makedirs(f'{home}/.config/slg')
-        with open(f'{home}/.config/slg/slg-send-text-message.yml', 'w') as f:
-            f.write('phone_carrier: "tmobile"\nsending_email: "sgotting21@gmail.com"\nsubject: "Automated Message"\nphone_number: 8139438388\napp: "crhxswwrytfxuzkr"')
