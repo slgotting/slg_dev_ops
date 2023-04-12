@@ -138,7 +138,7 @@ if __name__ == '__main__':
 Description={service_name}
 StartLimitIntervalSec=60
 StartLimitBurst=2
-OnFailure=
+OnFailure=failure_handler_{service_name}.service
 
 [Service]
 ExecStart={service_command}
