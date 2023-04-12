@@ -138,7 +138,7 @@ if __name__ == '__main__':
 Description={service_name}
 StartLimitIntervalSec=60
 StartLimitBurst=2
-OnFailure=failure_handler@%N.service restart_handler@%N.service
+OnFailure=
 
 [Service]
 ExecStart={service_command}
@@ -153,44 +153,32 @@ WantedBy=multi-user.target
         with open(f"/etc/systemd/system/{service_name}.service", "w") as f:
             f.write(service_unit_file)
 
-        # Create systemd unit file for notification script
+        # Create systemd unit file for failure handler
         failure_handler = f"""\
 [Unit]
-Description=Failure Handler (Notification)
+Description=Failure Handler (Notification) then restart after delay
 
 [Service]
 Type=oneshot
-# Perform some special action for when %i exits unexpectedly.
-ExecStart=slg-send-text-message -m '%i service just failed on server {socket.gethostname()}! Will attempt to restart again in {restart_delay_in_minutes} minutes'
-
-[Install]
-WantedBy=multi-user.target
-
-"""
-
-        with open(f"/etc/systemd/system/failure_handler@.service", "w") as f:
-            f.write(failure_handler)
-
-
-        restart_handler = f"""
-[Unit]
-Description=Restart after {restart_delay_in_minutes} minutes on service failure for %i
-
-[Service]
-Type=oneshot
+# Perform some special action for when {service_name} exits unexpectedly.
+ExecStart=slg-send-text-message -m '{service_name} service just failed on server {socket.gethostname()}! Will attempt to restart again in {restart_delay_in_minutes} minutes'
 ExecStart=/bin/sleep {restart_delay_in_minutes}m
-ExecStart=/bin/systemctl restart %i
+ExecStart=/bin/systemctl restart {service_name}
 
 [Install]
 WantedBy=multi-user.target
+
 """
-        with open(f"/etc/systemd/system/restart_handler@.service", "w") as f:
-            f.write(restart_handler)
+        with open(f"/etc/systemd/system/failure_handler_{service_name}.service", "w") as f:
+            f.write(failure_handler)
 
         # Reload systemd configuration and enable services
         subprocess.run(["sudo", "systemctl", "daemon-reload"])
         subprocess.run(["sudo", "systemctl", "enable", f"{service_name}.service"])
         subprocess.run(["sudo", "systemctl", "start", f"{service_name}.service"])
+        subprocess.run(["sudo", "systemctl", "enable", f"failure_handler_{service_name}.service"])
+        subprocess.run(["sudo", "systemctl", "start", f"failure_handler_{service_name}.service"])
+
 
     except:
         logger.exception('An error occurred')
