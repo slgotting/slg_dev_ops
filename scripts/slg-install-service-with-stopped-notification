@@ -176,9 +176,6 @@ WantedBy=multi-user.target
         subprocess.run(["sudo", "systemctl", "daemon-reload"])
         subprocess.run(["sudo", "systemctl", "enable", f"{service_name}.service"])
         subprocess.run(["sudo", "systemctl", "start", f"{service_name}.service"])
-        subprocess.run(["sudo", "systemctl", "enable", f"failure_handler_{service_name}.service"])
-        subprocess.run(["sudo", "systemctl", "start", f"failure_handler_{service_name}.service"])
-
 
     except:
         logger.exception('An error occurred')
