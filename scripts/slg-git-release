@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 import yaml
 import subprocess
+from subprocess import PIPE
 import os
 import argparse
+from argparse import RawTextHelpFormatter
 import sys
 import re
 
 
 def get_arguments():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
 
     # argument groups can have their tickers combined (ie -su)
     bools = parser.add_argument_group()
@@ -20,16 +22,19 @@ def get_arguments():
                         help='Message for this commit')
 
     parser.add_argument('-s', '--scripts',
-                        help='NOTE: You must add any changes in the scripts in order for those changes to be pushed. This script will not add anything other than version.py. Pass in a comma separated list of scripts to run before the repo gets updated and pushed. ')
+                        help='Pass in a comma separated list of scripts to run before the repo gets updated and pushed.\n\n NOTE: You must add any changes in the scripts in order for those changes to be pushed. This script will not add anything other than version.py.\n\n')
 
     parser.add_argument('-f', '--scripts_file', default="scripts/release/slg-git-release.yml",
-                        help='Any scripts passed by "--scripts" are executed before scripts in the file.')
+                        help='''Any scripts passed by "--scripts" are executed before scripts in the file.
+Syntax in file is:\n scripts: |\n  script1\n  script2\n
+Default: scripts/release/slg-git-release.yml\n
+Warning: Do not attempt to use these scripts to capture input from the user, as the child process' input will not be accessible.\n''')
 
     # which part of version to increment (major, minor, patch) ; if neither major or minor are checked then we default to patch
-    bools.add_argument('-M', dest='major', action='store_true',
+    bools.add_argument('-M', '--major', action='store_true',
                        help='Increment the major version and release')
 
-    bools.add_argument('-m', dest='minor', action='store_true',
+    bools.add_argument('-m', '--minor', action='store_true',
                        help='Increment the minor version and release')
 
     args = parser.parse_args()
@@ -107,7 +112,7 @@ if __name__ == '__main__':
     scripts = []
     if args.scripts:
         scripts += args.scripts.split(',')
-    if args.scripts_file:
+    if os.path.exists(args.scripts_file):
         with open(args.scripts_file, 'r') as f:
             data = yaml.safe_load(f)
             script_str = data['scripts']
@@ -116,7 +121,7 @@ if __name__ == '__main__':
 
     for script in scripts:
         # check output should exit if we return a nonzero exit code
-        subprocess.check_output(f"{script} {new_version}", shell=True)
+        subprocess.run(f"{script} {new_version[1:]}", shell=True, stdout=PIPE, stderr=PIPE)
 
     pushed = subprocess.check_output(
         f'git add version.py && git commit -m "{args.commit_message}" && git push origin master',
