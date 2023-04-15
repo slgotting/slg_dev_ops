@@ -18,6 +18,9 @@ def get_arguments():
     parser.add_argument('-c', '--commit_message', default='update version',
                         help='Message for this commit')
 
+    parser.add_argument('-s', '--scripts',
+                        help='NOTE: You must add any changes in the scripts in order for those changes to be pushed. This script will not add anything other than version.py. Pass in a comma separated list of scripts to run before the repo gets updated and pushed. ')
+
     # which part of version to increment (major, minor, patch) ; if neither major or minor are checked then we default to patch
     bools.add_argument('-M', dest='major', action='store_true',
                        help='Increment the major version and release')
@@ -97,11 +100,15 @@ if __name__ == '__main__':
     output = subprocess.check_output(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
 
+    if args.scripts:
+        for script in args.scripts.split(','):
+            subprocess.run(f"{script} {new_version}", shell=True)
+
     pushed = subprocess.check_output(
         f'git add version.py && git commit -m "{args.commit_message}" && git push origin master',
         shell=True)
 
-    
+
     if 'rejected' in pushed.decode('utf-8'):
         print('\n\nPush was rejected for some reason. Check output and make appropriate fixes before pushing a release')
     else:

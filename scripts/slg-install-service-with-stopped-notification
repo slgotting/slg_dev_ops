@@ -32,7 +32,7 @@ Example:
 slg-install-service-with-stopped-notification \\
 -u steven \\
 -sn doodlers-website \\
--sc "~/flask-celery-playground/website/venv/bin/gunicorn --bind 127.0.0.1:5000 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 wsgi:app --timeout=600 > /var/log/slg/doodler-website.log 2>&1 &"
+-sc '/bin/bash -c "cd /home/steven/flask-celery-playground/website && venv/bin/gunicorn --bind 127.0.0.1:5000 -k geventwebsocket.gunicorn.workers.GeventWebSocketWorker -w 1 wsgi:app --timeout=600 > /var/log/slg/doodlers-website.log 2>&1"'
 
 ''', formatter_class=RawTextHelpFormatter)
 
