@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import yaml
 import subprocess
 import os
 import argparse
@@ -20,6 +21,9 @@ def get_arguments():
 
     parser.add_argument('-s', '--scripts',
                         help='NOTE: You must add any changes in the scripts in order for those changes to be pushed. This script will not add anything other than version.py. Pass in a comma separated list of scripts to run before the repo gets updated and pushed. ')
+
+    parser.add_argument('-f', '--scripts_file', default="scripts/release/slg-git-release.yml",
+                        help='Any scripts passed by "--scripts" are executed before scripts in the file.')
 
     # which part of version to increment (major, minor, patch) ; if neither major or minor are checked then we default to patch
     bools.add_argument('-M', dest='major', action='store_true',
@@ -100,14 +104,23 @@ if __name__ == '__main__':
     output = subprocess.check_output(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
 
+    scripts = []
     if args.scripts:
-        for script in args.scripts.split(','):
-            subprocess.run(f"{script} {new_version}", shell=True)
+        scripts += args.scripts.split(',')
+    if args.scripts_file:
+        with open(args.scripts_file, 'r') as f:
+            data = yaml.safe_load(f)
+            script_str = data['scripts']
+            script_lines = script_str.splitlines()
+        scripts += script_lines
+
+    for script in scripts:
+        # check output should exit if we return a nonzero exit code
+        subprocess.check_output(f"{script} {new_version}", shell=True)
 
     pushed = subprocess.check_output(
         f'git add version.py && git commit -m "{args.commit_message}" && git push origin master',
         shell=True)
-
 
     if 'rejected' in pushed.decode('utf-8'):
         print('\n\nPush was rejected for some reason. Check output and make appropriate fixes before pushing a release')
