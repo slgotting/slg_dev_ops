@@ -18,6 +18,9 @@ def get_arguments():
     parser.add_argument('-u', '--username', default="slgotting",
                         help="username owner of repo")
 
+    parser.add_argument('-r', '--repo_name',
+                        help="Full repo name (e.g. 'slgotting/slg_dev_ops'")
+
     parser.add_argument('-c', '--commit_message', default='update version',
                         help='Message for this commit')
 
@@ -82,9 +85,12 @@ if __name__ == '__main__':
         print('gh is not installed')
         exit(1)
 
-    repo_name = subprocess.check_output(
-        'basename `git rev-parse --show-toplevel`',
-        shell=True).decode('utf-8').strip()
+    if not args.repo_name:
+        repo_name = subprocess.check_output(
+            'basename `git rev-parse --show-toplevel`',
+            shell=True).decode('utf-8').strip()
+    else:
+        repo_name = args.repo_name
 
     # get latest release from github repo
     releases = subprocess.check_output(
