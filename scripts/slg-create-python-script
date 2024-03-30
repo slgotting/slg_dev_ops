@@ -150,10 +150,11 @@ if __name__ == '__main__':
             name=__name__,
             log_path=f'/var/log/slg/{{__file__.split(\\"/\\")[-1]}}.log'
         )
-        config = build_true_configuration(args, args.config_filepath)
-        guarantee_requirements_met(config)
-        sensitive_stripped_config = strip_sensitive_arguments(config)
-        logger.info(f'\\nUsing configuration:\\n\\n{{pformat(sensitive_stripped_config)}}')
+        if 'config_filepath' in args:
+            config = build_true_configuration(args, args.config_filepath)
+            guarantee_requirements_met(config)
+            sensitive_stripped_config = strip_sensitive_arguments(config)
+            logger.info(f'\\nUsing configuration:\\n\\n{{pformat(sensitive_stripped_config)}}')
 
     except:
         logger.exception('An error occurred')
