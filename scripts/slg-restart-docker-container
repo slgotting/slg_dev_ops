@@ -40,6 +40,10 @@ def get_arguments():
     parser.add_argument('tag', help="The new image tag")
 
     # integer value
+    parser.add_argument('-a', '--run_args', type=str,
+                        help='Run the container with these additional arguments')
+
+    # integer value
     parser.add_argument('-p', '--port', type=int,
                         help='Which port we should map 80 to')
 
@@ -112,7 +116,7 @@ if __name__ == '__main__':
 
         subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker stop {config.get('container_name')}", shell=True)
         subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker rm {config.get('container_name')}", shell=True)
-        subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker run -p {config.get('port')}:80 --restart unless-stopped --name {config.get('container_name')} -d {config.get('image')}:{config.get('tag')}", shell=True)
+        subprocess.run(f"echo {config.get('sudo_password')} | sudo -S docker run {config.get('run_args', '')} -p {config.get('port')}:80 --restart unless-stopped --name {config.get('container_name')} -d {config.get('image')}:{config.get('tag')}", shell=True)
 
     except:
         logger.exception('An error occurred')
