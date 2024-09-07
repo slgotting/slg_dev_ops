@@ -38,7 +38,7 @@ def test_args(args):
         return 'This script only accepts "ubuntu" or "debian" as OS'
 
     if os == 'ubuntu' and codename in [
-            'trusty', 'xenial', 'artful', 'bionic']:
+            'trusty', 'xenial', 'artful', 'bionic', 'noble']:
         pass
     elif os == 'debian' and codename in ['jessie', 'stretch']:
         pass
