@@ -183,5 +183,11 @@ if __name__ == "__main__":
             logger.info(result)
 
         logger.info(f'Script "{script_name}" successfully created')
+
+        config_path = f'/home/steven/.config/slg/{script_name}.yml'
+
+        result = subprocess.check_output(f"sudo -u {args.username} touch {config_path}", shell=True)
+
+        logger.info(f'Config successfully created at {config_path}')
     except:
         logger.exception(f'Error occurred while creating script "{script_name}"')
