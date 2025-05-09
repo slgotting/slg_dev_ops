@@ -1,2 +1,2 @@
 logger-slg
-slg-script-helpers>=0.1.4
+slg-script-helpers>=0.1.5
