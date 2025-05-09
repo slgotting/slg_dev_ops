@@ -61,7 +61,7 @@ def clone_repository(repo_url, branch, destination, logger):
             return
 
     try:
-        subprocess.run(['git', 'clone', '--branch', branch, repo_url, destination], check=True)
+        subprocess.run(['git', 'clone', '--recurse-submodules', '--branch', branch, repo_url, destination], check=True)
         logger.info("Repository cloned successfully")
     except subprocess.CalledProcessError as e:
         logger.error(f"Failed to clone repository: {e}")
