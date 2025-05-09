@@ -79,6 +79,21 @@ def stow_dotfiles(stow_packages, destination, target_dir, logger):
             logger.warning(f"Package {package} does not exist in the repository, skipping")
             continue
 
+        # Run a dry-run to detect conflicts
+        dry_run = subprocess.run(
+            ['stow', '--target', target_dir, '--restow', '--verbose=2', '--no', package],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+        )
+
+        # Parse output to identify conflicting paths
+        for line in dry_run.stderr.splitlines():
+            if "existing target is neither a link nor a directory" in line:
+                conflict_path = line.split(':', 1)[1].strip()
+                full_path = os.path.join(target_dir, conflict_path)
+                if os.path.exists(full_path):
+                    print(f"Removing conflict: {full_path}")
+                    os.remove(full_path)
+
         logger.info(f"Stowing package: {package}")
         try:
             # Use --no-folding to prevent stow from merging directories
