@@ -110,10 +110,15 @@ if __name__ == '__main__':
         try:
             latest_version = releases.decode('utf-8').split('\n')[0].split('\t')[0]
         except:
-            latest_version = input('Could not automatically determine latest version. Please enter latest version with format "vX.X.X": ')
+            latest_version = input('Could not automatically determine latest version. Please enter LATEST version with format "vX.X.X": ')
 
         # update version (this has v on the front of it)
-        new_version = increment_version(latest_version, args)
+        try:
+            new_version = increment_version(latest_version, args)
+        except:
+            new_version = input('Could not automatically determine latest version. Please enter NEW version with format "vX.X.X": ')
+
+
 
     output = subprocess.check_output(
         f'echo "__version__ = \'{new_version[1:]}\'" > version.py', shell=True)
