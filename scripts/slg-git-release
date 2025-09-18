@@ -107,7 +107,10 @@ if __name__ == '__main__':
                     'Please enter the appropriate format([0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3})')
         print('\n\nAlso make sure to add repository secrets for PYPI on github before releasing. \n\n')
     else:
-        latest_version = releases.decode('utf-8').split('\n')[0].split('\t')[0]
+        try:
+            latest_version = releases.decode('utf-8').split('\n')[0].split('\t')[0]
+        except:
+            latest_version = input('Could not automatically determine latest version. Please enter latest version with format "vX.X.X": ')
 
         # update version (this has v on the front of it)
         new_version = increment_version(latest_version, args)
